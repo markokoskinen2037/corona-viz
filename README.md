@@ -1,1 +1,1 @@
-Application hosted at: https://sap-front-ms.herokuapp.com/
+Application hosted at: https://corona-viz-mk.herokuapp.com/
