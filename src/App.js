@@ -215,13 +215,13 @@ function App() {
 
     return (
         <div>
-            <h1 style={{ textAlign: "center" }}>Coronavirus timeline</h1>
+            <h1 className="blink_me" style={{ textAlign: "center" }}>Coronavirus timeline 2020</h1>
 
             <div id="zoom-controls" style={{ position: "fixed", bottom: 0, right: 0 }}>
                 <button onClick={() => setZoom(zoom * 2)}>Zoom in</button>
                 <button onClick={() => setZoom(zoom / 2)}>Zoom out</button>
             </div>
-            <div id="controls" >
+            <div id="controls" style={{ paddingBottom: "1em" }} >
                 <span>Select which cases to show: </span>
                 <select onChange={val => setShow(val.target.value)}>
                     <option value="confirmed">Confirmed cases</option>
