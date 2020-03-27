@@ -18,10 +18,10 @@ path {
 }
 
 .blink_me {
-  animation: blinker 2s linear infinite;
+  animation: blinker 1.5s linear infinite;
   color:red;
 }
 
 @keyframes blinker {  
-  50% { opacity: 0; }
+  50% { opacity: 0.0; }
 }
