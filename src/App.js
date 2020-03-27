@@ -11,6 +11,8 @@ import {
 import { readString } from 'react-papaparse'
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
+import ActiveCountryDetails from "./ActiveCountryDetails";
+import ActiveDotDetails from "./ActiveDotDetails";
 
 function App() {
 
@@ -23,6 +25,9 @@ function App() {
     const [selectedDateIndex, setSelectedDateIndex] = useState(4)
     const [show, setShow] = useState("confirmed")
     const [divider, setDivider] = useState(2500)
+    const [zoom, setZoom] = useState(1)
+    const [activeCountry, setActiveCountry] = useState(null)
+    const [activeDot, setActiveDot] = useState(null)
 
     const fetchCsv = (filename) => {
         return fetch(filename).then(function (response) {
@@ -174,6 +179,7 @@ function App() {
 
         return (
             <Marker
+                onClick={() => setActiveDot(confirmed)}
                 key={i + "confirmed"}
                 marker={{ coordinates: [long, lat] }}
                 style={{
@@ -188,6 +194,7 @@ function App() {
             </Marker>
         )
     })
+
 
 
     let markers
@@ -208,25 +215,33 @@ function App() {
 
     return (
         <div>
-
             <h1 style={{ textAlign: "center" }}>Coronavirus timeline</h1>
-            <span>Select which cases to show: </span>
-            <select onChange={val => setShow(val.target.value)}>
-                <option value="confirmed">Confirmed cases</option>
-                <option value="dead">Dead cases</option>
-                <option value="recovered">Recovered cases</option>
-            </select>
-            <h1>Day: {selectedDateIndex - 3}</h1>
-            <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={4} max={state.confirmed[0].length - 4} />
-            <h1>Divider: {divider}</h1>
-            <Slider onChange={val => setDivider(val)} value={divider} min={1} max={100000} />
+
+            <div id="zoom-controls" style={{ position: "fixed", bottom: 0, right: 0 }}>
+                <button onClick={() => setZoom(zoom * 2)}>Zoom in</button>
+                <button onClick={() => setZoom(zoom / 2)}>Zoom out</button>
+            </div>
+            <div id="controls" >
+                <span>Select which cases to show: </span>
+                <select onChange={val => setShow(val.target.value)}>
+                    <option value="confirmed">Confirmed cases</option>
+                    <option value="dead">Dead cases</option>
+                    <option value="recovered">Recovered cases</option>
+                </select>
+                <h1>Day: {selectedDateIndex - 3}</h1>
+                <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={4} max={state.confirmed[0].length - 4} />
+                <h1>Divider: {divider}</h1>
+                <Slider onChange={val => setDivider(val)} value={divider} min={1} max={100000} />
+            </div>
+
 
             <ComposableMap style={{ width: "100%", height: "auto" }}>
-                <ZoomableGroup>
+                <ZoomableGroup zoom={zoom}>
                     <Geographies geography={"https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json"}>
                         {(geographies, projection) => geographies.map((geography, i) => (
                             <Geography
                                 key={i}
+                                onClick={() => setActiveCountry(geography.properties)}
                                 geography={geography}
                                 projection={projection}
                             />
@@ -237,6 +252,8 @@ function App() {
                     </Markers>
                 </ZoomableGroup>
             </ComposableMap>
+            <ActiveCountryDetails activeCountry={activeCountry} />
+            <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeDot={activeDot} />
         </div >
     )
 
