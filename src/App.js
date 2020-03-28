@@ -108,7 +108,7 @@ function App() {
     const calculateSize = (count) => {
         let size = count / divider
         if (size < 1) {
-            size = 1
+            size = 1.5
         }
         return size
     }
