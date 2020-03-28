@@ -2,11 +2,11 @@ import React from 'react'
 import * as d3 from "d3"
 export const Slice = props => {
 
-    let { pie } = props
+    let { pie, size } = props
 
     let arc = d3.arc()
-        .innerRadius(0)
-        .outerRadius(5)
+        .innerRadius(5)
+        .outerRadius(10)
 
     let interpolate = d3.interpolateRgb("#eaaf79", "#bc3358")
 

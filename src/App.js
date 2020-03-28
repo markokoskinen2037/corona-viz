@@ -29,6 +29,7 @@ function App() {
     const [zoom, setZoom] = useState(1)
     const [activeCountry, setActiveCountry] = useState(null)
     const [activeDot, setActiveDot] = useState(null)
+    const [dailyData, setDailyData] = useState({})
 
     const fetchCsv = (filename) => {
         return fetch(filename).then(function (response) {
@@ -164,10 +165,8 @@ function App() {
 
         }
 
-        console.log(results)
-
-
-
+        //console.log(results)
+        setDailyData(results)
     }
 
 
@@ -260,26 +259,49 @@ function App() {
         const long = confirmed[3]
         let count = parseInt(confirmed[selectedDateIndex])
 
+        const key = lat + "," + long
+        const data = dailyData[key]
+
+        let confirmedCases, deadCases, recoveredCases = 0
+
+        if (data) {
+            if (data["confirmed"][selectedDateIndex]) {
+                confirmedCases = data["confirmed"][selectedDateIndex]
+            }
+
+            if (data["dead"][selectedDateIndex]) {
+                deadCases = data["dead"][selectedDateIndex]
+            }
+
+            if (data["recovered"][selectedDateIndex]) {
+                recoveredCases = data["recovered"][selectedDateIndex]
+            }
+        }
+
+        const res = [confirmedCases, deadCases, recoveredCases]
+
+
+
+
+
+
+
         const size = calculateSize(count)
 
 
         if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
+
 
         return (
             <Marker
                 onClick={() => setActiveDot(confirmed)}
                 key={i + "confirmed"}
                 marker={{ coordinates: [long, lat] }}
-                style={{
-                    default: { fill: "yellow" },
-                    hover: { fill: "yellow" },
-                    pressed: { fill: "yellow" },
-                }}
+
             >
-
-                <circle cx={0} cy={0} r={size} />
-                <SimplePieChart />
-
+                <g transform={`translate(-100,-100)`}>
+                    <SimplePieChart size={size} data={res} />
+                </g>
 
             </Marker>
         )

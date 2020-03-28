@@ -2,17 +2,20 @@ import React from 'react'
 import * as d3 from "d3"
 import { Slice } from './Slice';
 
-export const SimplePieChart = () => {
+export const SimplePieChart = ({ data, size }) => {
 
-    const height = 10;
-    const width = 10;
+    const height = 200;
+    const width = 200;
 
-    let pie = d3.pie()([4, 2, 5])
+    let pie = d3.pie()(data)
+
+    //                     <g transform="translate(-15,-15)">
+
 
     return (
         <svg height={height} width={width}>
-            <g transform={`translate(${width / 2}, ${height / 2})`}>
-                <Slice pie={pie} />
+            <g transform={`translate(100,100)`}>
+                <Slice size={size} pie={pie} />
             </g>
 
         </svg>
