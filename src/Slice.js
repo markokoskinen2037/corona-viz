@@ -13,6 +13,6 @@ export const Slice = props => {
     return pie.map((slice, index) => {
         let slideColor = interpolate(index / (pie.length - 1))
 
-        return <path d={arc(slice)} fill={slideColor} />
+        return <path key={slice + index} d={arc(slice)} fill={slideColor} />
     })
 }
