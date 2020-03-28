@@ -13,6 +13,7 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import ActiveCountryDetails from "./ActiveCountryDetails";
 import ActiveDotDetails from "./ActiveDotDetails";
+import { SimplePieChart } from "./SimplePieChart";
 
 function App() {
 
@@ -190,6 +191,8 @@ function App() {
             >
 
                 <circle cx={0} cy={0} r={size} />
+                <SimplePieChart />
+
 
             </Marker>
         )
