@@ -41,6 +41,135 @@ function App() {
         });
     }
 
+    const createSummary = (confirmedData, deadData, recoveredData) => {
+        console.log("Creating summary...")
+
+        const uniqueCordinates = []
+
+        let temp = confirmedData.concat(deadData).concat(recoveredData)
+
+        temp.forEach(element => {
+            const lat = element[2]
+            const long = element[3]
+
+            const obj = { lat, long }
+
+            if (!uniqueCordinates.find((element) => element.lat === lat && element.long === long)) {
+                uniqueCordinates.push(obj)
+            }
+        })
+
+
+        console.log("Found ", uniqueCordinates.length, " unique cordinates.")
+
+
+        const dayCount = Math.min(confirmedData[0].length, deadData[0].length, recoveredData[0].length)
+
+        console.log("Processing data for ", dayCount, " days.")
+
+        let results = {}
+
+        uniqueCordinates.forEach((cordinate) => {
+            const { lat, long } = cordinate
+
+            if (!lat || !long) return
+
+            const key = lat + "," + long
+
+            results = {
+                ...results,
+                [key]: {
+                    confirmed: [],
+                    recovered: [],
+                    dead: []
+                }
+            }
+
+        })
+
+
+
+        for (let dayIndex = 4; dayIndex < dayCount; dayIndex++) { // Start from i = 4, because first 3 entries are metadata.
+
+
+            confirmedData.forEach(row => {
+                const count = parseInt(row[dayIndex])
+                const lat = row[2]
+                const long = row[3]
+
+
+                if (!lat || !long) return
+
+                const key = lat + "," + long
+
+                const oldList = results[key].confirmed
+                oldList.push(count)
+
+                results = {
+                    ...results,
+                    [key]: {
+                        ...results[key],
+                        confirmed: oldList
+
+                    }
+                }
+            })
+
+            deadData.forEach(row => {
+                const count = parseInt(row[dayIndex])
+                const lat = row[2]
+                const long = row[3]
+
+
+                if (!lat || !long) return
+
+                const key = lat + "," + long
+
+                const oldList = results[key].dead
+                oldList.push(count)
+
+                results = {
+                    ...results,
+                    [key]: {
+                        ...results[key],
+                        dead: oldList
+
+                    }
+                }
+            })
+
+            recoveredData.forEach(row => {
+                const count = parseInt(row[dayIndex])
+                const lat = row[2]
+                const long = row[3]
+
+
+                if (!lat || !long) return
+
+                const key = lat + "," + long
+
+                const oldList = results[key].recovered
+                oldList.push(count)
+
+                results = {
+                    ...results,
+                    [key]: {
+                        ...results[key],
+                        recovered: oldList
+
+                    }
+                }
+            })
+
+
+        }
+
+        console.log(results)
+
+
+
+    }
+
 
     useEffect(() => {
         async function doStuff() {
@@ -48,59 +177,17 @@ function App() {
             const deadCsv = await fetchCsv("dead.csv")
             const recoveredCsv = await fetchCsv("recovered.csv")
 
-            const confirmedData = readString(confirmedCsv).data
-            const deadData = readString(deadCsv).data
-            const recoveredData = readString(recoveredCsv).data
-
-            console.log(recoveredData.slice(1))
+            const confirmedData = readString(confirmedCsv).data.slice(1)
+            const deadData = readString(deadCsv).data.slice(1)
+            const recoveredData = readString(recoveredCsv).data.slice(1)
 
 
-            const dayData = []
-
-            for (let i = 1; i < confirmedData.length - 1; i++) { // Data length = how many countries
-
-                const country = confirmedData[i][1]
-                console.log(country)
-
-                const confirmedList = []
-                for (let j = 4; j < confirmedData[0].length - 4; j++) { // Column size = how many days tracker
-                    const confirmedCount = parseInt(confirmedData[i][j])
-                    confirmedList.push(confirmedCount)
-                }
-
-                const deadList = []
-                for (let j = 4; j < deadData[0].length - 4; j++) { // Column size = how many days tracker
-                    const deadCount = parseInt(deadData[i][j])
-                    deadList.push(deadCount)
-                }
-
-                const recoveredList = []
-                for (let j = 4; j < recoveredData[0].length - 4; j++) { // Column size = how many days tracker
-                    if (recoveredData[i]) {
-                        const recoveredCount = parseInt(recoveredData[i][j])
-                        recoveredList.push(recoveredCount)
-                    } else {
-                        recoveredList.push(recoveredList[recoveredList.length - 1])
-                    }
-                }
-
-                dayData.push({
-                    [country]: {
-                        confirmedList,
-                        recoveredList,
-                        deadList
-                    }
-                })
-
-            }
-
-
-            console.log(dayData)
+            createSummary(confirmedData, deadData, recoveredData)
 
             setState({
-                confirmed: confirmedData.slice(1),
-                recovered: recoveredData.slice(1),
-                dead: deadData.slice(1)
+                confirmed: confirmedData,
+                recovered: recoveredData,
+                dead: deadData,
             })
         }
         doStuff()
