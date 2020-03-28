@@ -278,7 +278,7 @@ function App() {
             }
         }
 
-        const res = [confirmedCases, deadCases, recoveredCases]
+        const res = [confirmedCases, recoveredCases, deadCases]
 
 
 

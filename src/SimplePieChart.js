@@ -9,9 +9,6 @@ export const SimplePieChart = ({ data, size }) => {
 
     let pie = d3.pie()(data)
 
-    //                     <g transform="translate(-15,-15)">
-
-
     return (
         <svg height={height} width={width}>
             <g transform={`translate(100,100)`}>
