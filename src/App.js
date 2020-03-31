@@ -286,6 +286,7 @@ function App() {
 
 
 
+
         const size = calculateSize(count)
 
 
@@ -294,7 +295,7 @@ function App() {
 
         return (
             <Marker
-                onClick={() => setActiveDot(confirmed)}
+                onClick={() => setActiveDot(res)}
                 key={i + "confirmed"}
                 marker={{ coordinates: [long, lat] }}
 

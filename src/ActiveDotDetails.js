@@ -7,8 +7,10 @@ export default function ActiveDotDetails({ activeDot, selectedDateIndex }) {
     console.log(activeDot, selectedDateIndex)
 
     return (
-        <div style={{ position: "fixed", bottom: 0, color: "yellow", backgroundColor: "black", fontSize: 50, left: 0 }}>
-            <span>Confirmed: {activeDot[selectedDateIndex]}</span>
+        <div style={{ position: "fixed", bottom: 0, backgroundColor: "black", fontSize: 50, left: 0 }}>
+            <div style={{ color: "yellow" }}>Confirmed: {activeDot[0]}</div>
+            <div style={{ color: "green" }}>Recovered: {activeDot[1]}</div>
+            <div style={{ color: "gray" }} >Dead: {activeDot[2]}</div>
         </div>
     )
 }
