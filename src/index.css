@@ -5,7 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding:5px 5px 0px 5px;
+  padding:0;
 }
 
 code {
@@ -24,4 +24,31 @@ path {
 
 @keyframes blinker {  
   50% { opacity: 0.0; }
+}
+
+
+.application-container{
+  display:flex;
+}
+
+.sidebar{
+  width: 30%;
+  height: 100vh;
+  border: 1px solid black;
+  padding:5px;
+}
+
+
+.map{
+  padding: 5px;
+  width:70%;
+  height:100vh;
+  border: 1px solid black;
+}
+
+.zoom-controls{
+  position: relative;
+  top:-27px;
+  left:50%;
+  width: fit-content;
 }

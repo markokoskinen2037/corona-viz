@@ -23,12 +23,12 @@ function App() {
         recovered: []
     })
 
-    const [selectedDateIndex, setSelectedDateIndex] = useState(4)
-    const [show, setShow] = useState("confirmed")
+    const [selectedDateIndex, setSelectedDateIndex] = useState(50)
+    const [show, setShow] = useState("pies")
     const [divider, setDivider] = useState(5000)
-    const [zoom, setZoom] = useState(1)
+    const [zoom, setZoom] = useState(1.2)
     const [activeCountry, setActiveCountry] = useState(null)
-    const [activeDot, setActiveDot] = useState(null)
+    const [activeLocationKey, setActiveLocationKey] = useState(null)
     const [dailyData, setDailyData] = useState({})
 
     const fetchCsv = (filename) => {
@@ -252,7 +252,7 @@ function App() {
         )
     })
 
-    const confirmedMarkers = state.confirmed.map((confirmed, i) => {
+    const pieMarkers = state.confirmed.map((confirmed, i) => {
         // const provinceOrState = confirmed[0]
         // const countryOrRegion = confirmed[1]
         const lat = confirmed[2]
@@ -279,23 +279,12 @@ function App() {
         }
 
         const res = [confirmedCases, recoveredCases, deadCases]
-
-
-
-
-
-
-
-
         const size = calculateSize(count)
-
-
         if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
-
 
         return (
             <Marker
-                onClick={() => setActiveDot(res)}
+                onClick={() => setActiveLocationKey(lat + "," + long)}
                 key={i + "confirmed"}
                 marker={{ coordinates: [long, lat] }}
 
@@ -318,8 +307,8 @@ function App() {
         case "recovered":
             markers = recoveredMarkers
             break;
-        case "confirmed":
-            markers = confirmedMarkers
+        case "pies":
+            markers = pieMarkers
             break;
 
         default:
@@ -330,43 +319,59 @@ function App() {
         <div>
             <h1 className="blink_me" style={{ textAlign: "center" }}>Coronavirus timeline 2020</h1>
 
-            <div id="zoom-controls" style={{ position: "fixed", bottom: 0, right: 0 }}>
-                <button onClick={() => setZoom(zoom * 2)}>Zoom in</button>
-                <button onClick={() => setZoom(zoom / 2)}>Zoom out</button>
-            </div>
-            <div id="controls" style={{ paddingBottom: "1em" }} >
-                <span>Select which cases to show: </span>
-                <select onChange={val => setShow(val.target.value)}>
-                    <option value="confirmed">Confirmed cases</option>
-                    <option value="dead">Dead cases</option>
-                    <option value="recovered">Recovered cases</option>
-                </select>
-                <h1>Day: {selectedDateIndex - 3}</h1>
-                <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={4} max={state.confirmed[0].length - 5} />
-                <h1>Divider: {divider}</h1>
-                <Slider step={50} onChange={val => setDivider(val)} value={divider} min={50} max={10000} />
+            <div className="application-container">
+                <div className="sidebar">
+
+                    <div id="controls" style={{ paddingBottom: "1em" }} >
+                        <span>Select which cases to show: </span>
+                        <select onChange={val => setShow(val.target.value)}>
+                            <option value="pies">Pies</option>
+                            <option value="dead">Dead cases</option>
+                            <option value="recovered">Recovered cases</option>
+                        </select>
+                        <h1>Day: {selectedDateIndex - 3}</h1>
+                        <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={4} max={state.confirmed[0].length - 5} />
+                        <h1>Divider: {divider}</h1>
+                        <Slider step={50} onChange={val => setDivider(val)} value={divider} min={50} max={10000} />
+                    </div>
+                    <ActiveCountryDetails activeCountry={activeCountry} />
+                    <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocationKey={activeLocationKey} dailyData={dailyData} />
+                    <h1>Graph:</h1>
+                    <div style={{ height: "200px", backgroundColor: "gray", color: "white" }}>Graph will be placed here.</div>
+                </div>
+
+
+                <div className="map">
+                    <ComposableMap style={{ width: "100%", height: "auto" }}>
+                        <ZoomableGroup zoom={zoom}>
+                            <Geographies geography={"https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json"}>
+                                {(geographies, projection) => geographies.map((geography, i) => (
+                                    <Geography
+                                        key={i}
+                                        onClick={() => setActiveCountry(geography.properties)}
+                                        geography={geography}
+                                        projection={projection}
+                                    />
+                                ))}
+                            </Geographies>
+                            <Markers>
+                                {markers}
+                            </Markers>
+                        </ZoomableGroup>
+                    </ComposableMap>
+
+                    <div className="zoom-controls">
+                        <button onClick={() => setZoom(zoom * 2)}>Zoom in</button>
+                        <button onClick={() => setZoom(zoom / 2)}>Zoom out</button>
+                    </div>
+
+
+                </div>
             </div>
 
 
-            <ComposableMap style={{ width: "100%", height: "auto" }}>
-                <ZoomableGroup zoom={zoom}>
-                    <Geographies geography={"https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json"}>
-                        {(geographies, projection) => geographies.map((geography, i) => (
-                            <Geography
-                                key={i}
-                                onClick={() => setActiveCountry(geography.properties)}
-                                geography={geography}
-                                projection={projection}
-                            />
-                        ))}
-                    </Geographies>
-                    <Markers>
-                        {markers}
-                    </Markers>
-                </ZoomableGroup>
-            </ComposableMap>
-            <ActiveCountryDetails activeCountry={activeCountry} />
-            <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeDot={activeDot} />
+
+
         </div >
     )
 
