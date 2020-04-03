@@ -25,7 +25,6 @@ function App() {
 
     const [selectedDateIndex, setSelectedDateIndex] = useState(50)
     const [show, setShow] = useState("pies")
-    const [divider, setDivider] = useState(5000)
     const [zoom, setZoom] = useState(1.2)
     const [activeCountry, setActiveCountry] = useState(null)
     const [activeLocationKey, setActiveLocationKey] = useState(null)
@@ -346,8 +345,6 @@ function App() {
                         </select>
                         <h1>Day: {selectedDateIndex - 3}</h1>
                         <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={4} max={state.confirmed[0].length - 5} />
-                        <h1>Divider: {divider}</h1>
-                        <Slider step={50} onChange={val => setDivider(val)} value={divider} min={50} max={10000} />
                     </div>
                     <ActiveCountryDetails activeCountry={activeCountry} />
                     <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocationKey={activeLocationKey} dailyData={dailyData} />
