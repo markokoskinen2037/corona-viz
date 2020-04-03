@@ -193,10 +193,9 @@ function App() {
     }, [])
 
     const calculateSize = (count) => {
-        let size = count / divider
-        if (size < 1) {
-            size = 1.5
-        }
+        // let size = count / divider
+        let size = Math.sqrt(count / 100) + 1
+
         return size
     }
 
@@ -279,7 +278,7 @@ function App() {
         }
 
         const res = [confirmedCases, recoveredCases, deadCases]
-        const size = calculateSize(count)
+        const size = calculateSize((confirmedCases + deadCases + recoveredCases))
         if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
 
         return (
