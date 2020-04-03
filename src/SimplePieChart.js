@@ -7,7 +7,9 @@ export const SimplePieChart = ({ data, size }) => {
     const height = 200;
     const width = 200;
 
-    let pie = d3.pie()(data)
+    const pieData = Object.entries(data).map(entry => entry[1])
+
+    let pie = d3.pie()(pieData)
 
     return (
         <svg height={height} width={width}>
