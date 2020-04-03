@@ -192,11 +192,18 @@ function App() {
         doStuff()
     }, [])
 
-    const calculateSize = (count) => {
-        // let size = count / divider
-        let size = Math.sqrt(count / 100) + 1
+    const calculateSize = (todaysData, forPie) => {
 
-        return size
+        if (!forPie) {
+            return (Math.sqrt((todaysData) / 100) + 1)
+        } else {
+            const { dead, recovered, confirmed } = todaysData
+            let size = Math.sqrt((dead + recovered + confirmed) / 100) + 1
+            return size
+        }
+
+
+
     }
 
     if (state.confirmed.length === 0 || state.dead.length === 0) return "Loading data..."
@@ -207,7 +214,7 @@ function App() {
         const lat = confirmed[2]
         const long = confirmed[3]
         const count = parseInt(confirmed[selectedDateIndex])
-        let size = calculateSize(count)
+        let size = calculateSize(count, false)
         if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
 
         return (
@@ -225,13 +232,40 @@ function App() {
         )
     })
 
+    const getTodaysData = (lat, long) => {
+        const key = lat + "," + long
+        const data = dailyData[key]
+
+        let confirmedCases, deadCases, recoveredCases = 0
+
+        if (data) {
+            if (data["confirmed"][selectedDateIndex]) {
+                confirmedCases = data["confirmed"][selectedDateIndex]
+            }
+
+            if (data["dead"][selectedDateIndex]) {
+                deadCases = data["dead"][selectedDateIndex]
+            }
+
+            if (data["recovered"][selectedDateIndex]) {
+                recoveredCases = data["recovered"][selectedDateIndex]
+            }
+        }
+
+        return {
+            confirmed: confirmedCases,
+            recovered: recoveredCases,
+            dead: deadCases,
+        }
+    }
+
     const deadMarkers = state.recovered.map((confirmed, i) => {
         // const provinceOrState = confirmed[0]
         // const countryOrRegion = confirmed[1]
         const lat = confirmed[2]
         const long = confirmed[3]
         const count = parseInt(confirmed[selectedDateIndex])
-        let size = calculateSize(count)
+        let size = calculateSize(count, false)
 
 
         if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
@@ -258,27 +292,9 @@ function App() {
         const long = confirmed[3]
         let count = parseInt(confirmed[selectedDateIndex])
 
-        const key = lat + "," + long
-        const data = dailyData[key]
 
-        let confirmedCases, deadCases, recoveredCases = 0
-
-        if (data) {
-            if (data["confirmed"][selectedDateIndex]) {
-                confirmedCases = data["confirmed"][selectedDateIndex]
-            }
-
-            if (data["dead"][selectedDateIndex]) {
-                deadCases = data["dead"][selectedDateIndex]
-            }
-
-            if (data["recovered"][selectedDateIndex]) {
-                recoveredCases = data["recovered"][selectedDateIndex]
-            }
-        }
-
-        const res = [confirmedCases, recoveredCases, deadCases]
-        const size = calculateSize((confirmedCases + deadCases + recoveredCases))
+        const todaysData = getTodaysData(lat, long)
+        const size = calculateSize(todaysData, true)
         if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
 
         return (
@@ -289,7 +305,7 @@ function App() {
 
             >
                 <g transform={`translate(-100,-100)`}>
-                    <SimplePieChart size={size} data={res} />
+                    <SimplePieChart size={size} data={todaysData} />
                 </g>
 
             </Marker>
