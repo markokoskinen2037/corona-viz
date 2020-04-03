@@ -6,6 +6,8 @@ export default function ActiveDotDetails({ activeLocationKey, selectedDateIndex,
     const data = dailyData[activeLocationKey]
 
     let [confirmedCases, deadCases, recoveredCases] = [0, 0, 0]
+    let [deadPercentage, confirmedPercentage, recoveredPercentage] = [0, 0, 0]
+    let total = 0
 
     if (data) {
         if (data["confirmed"][selectedDateIndex]) {
@@ -19,15 +21,23 @@ export default function ActiveDotDetails({ activeLocationKey, selectedDateIndex,
         if (data["recovered"][selectedDateIndex]) {
             recoveredCases = data["recovered"][selectedDateIndex]
         }
+        total = confirmedCases + deadCases + recoveredCases
     }
+
+    if (total > 0) {
+        confirmedPercentage = (confirmedCases / total * 100).toFixed(2)
+        recoveredPercentage = (recoveredCases / total * 100).toFixed(2)
+        deadPercentage = (deadCases / total * 100).toFixed(2)
+    }
+
 
     return (
         <>
             <h1>Detailed statistics:</h1>
             <div style={{ backgroundColor: "black", fontSize: 30 }}>
-                <div style={{ color: "yellow" }}>Confirmed: {confirmedCases} </div>
-                <div style={{ color: "green" }}>Recovered: {recoveredCases} </div>
-                <div style={{ color: "gray" }} >Dead: {deadCases} </div>
+                <div style={{ color: "yellow" }}>Confirmed: {confirmedCases} ({confirmedPercentage}%)  </div>
+                <div style={{ color: "green" }}>Recovered: {recoveredCases} ({recoveredPercentage}%)</div>
+                <div style={{ color: "gray" }} >Dead: {deadCases} ({deadPercentage}%)</div>
             </div>
         </>
     )
