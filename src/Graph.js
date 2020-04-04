@@ -7,7 +7,6 @@ export default function Graph({ dailyData, activeLocationKey }) {
 
     const svgRef = useRef();
     const [data, setData] = useState(null)
-    const days = 66;
 
     useEffect(() => {
         setData(dailyData[activeLocationKey])
@@ -20,14 +19,20 @@ export default function Graph({ dailyData, activeLocationKey }) {
 
             const svg = d3.select(svgRef.current);
 
+            const confirmedMax = Math.max(...data.confirmed)
+            const deadMax = Math.max(...data.dead)
+            const recoveredMax = Math.max(...data.recovered)
+            const yMax = Math.max(...[confirmedMax, deadMax, recoveredMax])
+            const days = data.recovered.length
+
 
             // X-axis
             const xScale = d3.scaleLinear()
-                .domain([0, days])
+                .domain([0, days - 1])
                 .range([0, 300])
 
             const xAxis = d3.axisBottom(xScale)
-                .tickFormat(index => index + 1)
+                .tickFormat(index => index)
 
             d3.select(".x-axis")
                 .style("transform", "translateY(150px)")
@@ -35,7 +40,7 @@ export default function Graph({ dailyData, activeLocationKey }) {
 
             // Y-axis
             const yScale = d3.scaleLinear()
-                .domain([0, 100000])
+                .domain([0, yMax])
                 .range([150, 0])
 
             const yAxis = d3.axisLeft(yScale)
@@ -70,7 +75,7 @@ export default function Graph({ dailyData, activeLocationKey }) {
             })
 
 
-            // Would be more optimal to update instead of remove. Does not matter too much right now.
+            // TODO: Would be more optimal to update instead of remove. Does not matter too much right now.
             d3.select(".dead-line").remove()
             d3.select(".recovered-line").remove()
             d3.select(".confirmed-line").remove()
@@ -81,6 +86,7 @@ export default function Graph({ dailyData, activeLocationKey }) {
                 .attr("class", "dead-line")
                 .attr("fill", "none")
                 .attr("stroke", "gray")
+                .attr("stroke-width", "2px")
                 .attr("d", deadLine)
 
             svg
@@ -89,6 +95,7 @@ export default function Graph({ dailyData, activeLocationKey }) {
                 .attr("class", "confirmed-line")
                 .attr("fill", "none")
                 .attr("stroke", "yellow")
+                .attr("stroke-width", "2px")
                 .attr("d", confirmedLine)
 
             svg
@@ -97,6 +104,7 @@ export default function Graph({ dailyData, activeLocationKey }) {
                 .attr("class", "recovered-line")
                 .attr("fill", "none")
                 .attr("stroke", "green")
+                .attr("stroke-width", "2px")
                 .attr("d", recoveredLine)
 
 
