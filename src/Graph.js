@@ -69,8 +69,11 @@ export default function Graph({ dailyData, activeLocationKey }) {
                 }
             })
 
-            debugger
 
+            // Would be more optimal to update instead of remove. Does not matter too much right now.
+            d3.select(".dead-line").remove()
+            d3.select(".recovered-line").remove()
+            d3.select(".confirmed-line").remove()
 
             svg
                 .append("path")
