@@ -28,7 +28,7 @@ function App() {
     const [show, setShow] = useState("pies")
     const [zoom, setZoom] = useState(1.2)
     const [activeCountry, setActiveCountry] = useState(null)
-    const [activeLocationKey, setActiveLocationKey] = useState("30.9756,112.2707")
+    const [activeLocationKey, setActiveLocationKey] = useState("64.0,26.0") // Finland
     const [dailyData, setDailyData] = useState({})
 
     const fetchCsv = (filename) => {
