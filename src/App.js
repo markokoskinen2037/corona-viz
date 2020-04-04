@@ -144,7 +144,6 @@ function App() {
                 const lat = row[2]
                 const long = row[3]
 
-
                 if (!lat || !long) return
 
                 const key = lat + "," + long
@@ -183,10 +182,13 @@ function App() {
 
             createSummary(confirmedData, deadData, recoveredData)
 
+
+            // Need to perform slicing here, because last row is newline, which contains no new data.
+            console.log(confirmedData)
             setState({
-                confirmed: confirmedData,
-                recovered: recoveredData,
-                dead: deadData,
+                confirmed: confirmedData.slice(0, confirmedData.length - 1),
+                recovered: recoveredData.slice(0, recoveredData.length - 1),
+                dead: deadData.slice(0, deadData.length - 1),
             })
         }
         doStuff()
@@ -345,8 +347,8 @@ function App() {
                             <option value="dead">Dead cases</option>
                             <option value="recovered">Recovered cases</option>
                         </select>
-                        <h1>Day: {selectedDateIndex - 2}</h1>
-                        <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={3} max={state.confirmed[0].length - 5} />
+                        <h1>Day: {selectedDateIndex}</h1>
+                        <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
                     </div>
                     <ActiveCountryDetails activeCountry={activeCountry} />
                     <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocationKey={activeLocationKey} dailyData={dailyData} />
