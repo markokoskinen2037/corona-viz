@@ -199,11 +199,11 @@ function App() {
         const divider = 1000
 
         if (!forPie) {
-            return (Math.sqrt((todaysData) / divider) + 1) * zoom
+            return (Math.sqrt((todaysData) / divider) + 1) * zoom / 2
         } else {
             const { dead, recovered, confirmed } = todaysData
             let size = Math.sqrt((dead + recovered + confirmed) / divider) + 1
-            return size * zoom
+            return size * zoom / 2
         }
 
 
