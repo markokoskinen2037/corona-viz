@@ -23,6 +23,7 @@ export default function Graph({ dailyData, activeLocationKey }) {
 
             const xAxis = d3.axisBottom(xScale)
                 .tickFormat(index => index + 1)
+
             d3.select(".x-axis")
                 .style("transform", "translateY(150px)")
                 .call(xAxis)
@@ -58,7 +59,7 @@ export default function Graph({ dailyData, activeLocationKey }) {
 
     return (
         <>
-            <svg style={{ padding: "10px" }} overflow="visible" ref={svgRef}>
+            <svg style={{ marginLeft: "50px" }} overflow="visible" ref={svgRef}>
                 <g className="x-axis" />
                 <g className="y-axis" />
             </svg>

@@ -36,6 +36,7 @@ path {
   height: 100vh;
   border: 1px solid black;
   padding:5px;
+  min-width: 370px; /* Width of the graph + margin 50px*/
 }
 
 

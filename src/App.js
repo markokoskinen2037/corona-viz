@@ -345,8 +345,8 @@ function App() {
                             <option value="dead">Dead cases</option>
                             <option value="recovered">Recovered cases</option>
                         </select>
-                        <h1>Day: {selectedDateIndex - 3}</h1>
-                        <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={4} max={state.confirmed[0].length - 5} />
+                        <h1>Day: {selectedDateIndex - 2}</h1>
+                        <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={3} max={state.confirmed[0].length - 5} />
                     </div>
                     <ActiveCountryDetails activeCountry={activeCountry} />
                     <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocationKey={activeLocationKey} dailyData={dailyData} />
