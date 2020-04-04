@@ -238,7 +238,7 @@ function App() {
         const key = lat + "," + long
         const data = dailyData[key]
 
-        let confirmedCases, deadCases, recoveredCases = 0
+        let [confirmedCases, deadCases, recoveredCases] = [0, 0, 0]
 
         if (data) {
             if (data["confirmed"][selectedDateIndex]) {
