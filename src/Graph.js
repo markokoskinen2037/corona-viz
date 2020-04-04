@@ -6,19 +6,24 @@ import * as d3 from "d3"
 export default function Graph({ dailyData, activeLocationKey }) {
 
     const svgRef = useRef();
-    const [data, setData] = useState([25, 56, 72, 128, 200, 220])
+    const [data, setData] = useState(null)
+    const days = 66;
 
     useEffect(() => {
-        setData(dailyData[activeLocationKey].recovered)
+        setData(dailyData[activeLocationKey])
     }, [activeLocationKey])
 
     useEffect(
         () => {
+
+            if (!data) return
+
             const svg = d3.select(svgRef.current);
 
 
+            // X-axis
             const xScale = d3.scaleLinear()
-                .domain([0, data.length - 1])
+                .domain([0, days])
                 .range([0, 300])
 
             const xAxis = d3.axisBottom(xScale)
@@ -28,7 +33,7 @@ export default function Graph({ dailyData, activeLocationKey }) {
                 .style("transform", "translateY(150px)")
                 .call(xAxis)
 
-
+            // Y-axis
             const yScale = d3.scaleLinear()
                 .domain([0, 100000])
                 .range([150, 0])
@@ -39,19 +44,57 @@ export default function Graph({ dailyData, activeLocationKey }) {
 
 
 
-            const myLine = d3.line()
+            const deadLine = d3.line()
                 .x((value, index) => xScale(index))
-                .y(yScale)
+                .y((value) => yScale(value.dead))
                 .curve(d3.curveCardinal)
 
+            const confirmedLine = d3.line()
+                .x((value, index) => xScale(index))
+                .y((value) => yScale(value.confirmed))
+                .curve(d3.curveCardinal)
+
+            const recoveredLine = d3.line()
+                .x((value, index) => xScale(index))
+                .y((value) => yScale(value.recovered))
+                .curve(d3.curveCardinal)
+
+
+            // Transpose the data:
+            var lineData = data.confirmed.map((element, index) => {
+                return {
+                    confirmed: element,
+                    dead: data.dead[index],
+                    recovered: data.recovered[index]
+                }
+            })
+
+            debugger
+
+
             svg
-                .selectAll(".line")
-                .data([data])
-                .join("path")
-                .attr("class", "line")
-                .attr("d", myLine)
+                .append("path")
+                .data([lineData])
+                .attr("class", "dead-line")
                 .attr("fill", "none")
-                .attr("stroke", "blue")
+                .attr("stroke", "gray")
+                .attr("d", deadLine)
+
+            svg
+                .append("path")
+                .data([lineData])
+                .attr("class", "confirmed-line")
+                .attr("fill", "none")
+                .attr("stroke", "yellow")
+                .attr("d", confirmedLine)
+
+            svg
+                .append("path")
+                .data([lineData])
+                .attr("class", "recovered-line")
+                .attr("fill", "none")
+                .attr("stroke", "green")
+                .attr("d", recoveredLine)
 
 
 
