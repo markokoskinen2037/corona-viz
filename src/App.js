@@ -292,12 +292,14 @@ function App() {
         // const countryOrRegion = confirmed[1]
         const lat = confirmed[2]
         const long = confirmed[3]
-        let count = parseInt(confirmed[selectedDateIndex])
 
 
         const todaysData = getTodaysData(lat, long)
+
+        const hasCases = Object.entries(todaysData).find(entry => entry[1] !== 0)
+        if (!hasCases) return null
+
         const size = calculateSize(todaysData, true)
-        if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
 
         return (
             <Marker
