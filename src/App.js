@@ -14,6 +14,7 @@ import 'rc-slider/assets/index.css';
 import ActiveCountryDetails from "./ActiveCountryDetails";
 import ActiveDotDetails from "./ActiveDotDetails";
 import { SimplePieChart } from "./SimplePieChart";
+import Graph from "./Graph";
 
 function App() {
 
@@ -27,7 +28,7 @@ function App() {
     const [show, setShow] = useState("pies")
     const [zoom, setZoom] = useState(1.2)
     const [activeCountry, setActiveCountry] = useState(null)
-    const [activeLocationKey, setActiveLocationKey] = useState(null)
+    const [activeLocationKey, setActiveLocationKey] = useState("30.9756,112.2707")
     const [dailyData, setDailyData] = useState({})
 
     const fetchCsv = (filename) => {
@@ -329,6 +330,7 @@ function App() {
             break;
     }
 
+
     return (
         <div>
             <h1 className="blink_me" style={{ textAlign: "center" }}>Coronavirus timeline 2020</h1>
@@ -349,7 +351,7 @@ function App() {
                     <ActiveCountryDetails activeCountry={activeCountry} />
                     <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocationKey={activeLocationKey} dailyData={dailyData} />
                     <h1>Graph:</h1>
-                    <div style={{ height: "200px", backgroundColor: "gray", color: "white" }}>Graph will be placed here.</div>
+                    <Graph dailyData={dailyData} activeLocationKey={activeLocationKey} />
                 </div>
 
 
