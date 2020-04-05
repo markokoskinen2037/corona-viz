@@ -196,14 +196,27 @@ function App() {
 
     const calculateSize = (todaysData, forPie) => {
 
-        const divider = 1000
+        const v_max = 132000 // This is just an estimate, need to calculate correct value automatically later.
 
         if (!forPie) {
-            return (Math.sqrt((todaysData) / divider) + 1) * zoom / 2
+            let v_i = todaysData
+            let r = Math.pow((v_i / v_max), 0.57) // Perceptual scaling (Flanney)
+            r = r * 12                            // Maximum radius
+            r = r + 1                             // To make the smallest dots appear
+            r = r * zoom / 2                      // Adjust for zoom level
+
+            return r
         } else {
             const { dead, recovered, confirmed } = todaysData
-            let size = Math.sqrt((dead + recovered + confirmed) / divider) + 1
-            return size * zoom / 2
+
+            let v_i = dead + recovered + confirmed
+            let r = Math.pow((v_i / v_max), 0.57) // Perceptual scaling (Flanney)
+            r = r * 12                            // Maximum radius
+            r = r + 1                             // To make the smallest dots appear
+            r = r * zoom / 2                      // Adjust for zoom level
+
+            return r
+            //return size * zoom / 2
         }
 
 
