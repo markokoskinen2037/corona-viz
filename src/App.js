@@ -11,7 +11,6 @@ import {
 import { readString } from 'react-papaparse'
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import ActiveCountryDetails from "./ActiveCountryDetails";
 import ActiveDotDetails from "./ActiveDotDetails";
 import { SimplePieChart } from "./SimplePieChart";
 import Graph from "./Graph";
@@ -456,7 +455,6 @@ function App() {
                         <h1>Day: {selectedDateIndex}</h1>
                         <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
                     </div>
-                    <ActiveCountryDetails activeCountry={activeCountry} />
                     <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} dailyData={dailyData} />
                     <Graph dailyData={dailyData} activeLocation={activeLocation} />
                 </div>
