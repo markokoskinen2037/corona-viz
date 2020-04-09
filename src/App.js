@@ -28,8 +28,18 @@ function App() {
     const [show, setShow] = useState("pies")
     const [zoom, setZoom] = useState(1.2)
     const [activeCountry, setActiveCountry] = useState(null)
-    const [activeLocationKey, setActiveLocationKey] = useState("64.0,26.0") // Finland
+    const [activeLocation, setActiveLocation] = useState({
+        key: "64.0,26.0",
+        provinceOrState: "",
+        countryOrRegion: "Finland"
+    }) // Finland
     const [dailyData, setDailyData] = useState({})
+    const [maxValues, setMaxValues] = useState({
+        deadMax: null,
+        recoveredMax: null,
+        confirmedMax: null
+    })
+    const [loaded, setLoaded] = useState(false)
 
     const fetchCsv = (filename) => {
         return fetch(filename).then(function (response) {
@@ -168,6 +178,18 @@ function App() {
         setDailyData(results)
     }
 
+    const getMax = (data) => {
+        let max = 0
+        data.forEach(row => {
+
+            row.forEach(element => {
+                let val = parseInt(element)
+                if (val > max) max = val
+            })
+        })
+        return max
+    }
+
 
     useEffect(() => {
         async function doStuff() {
@@ -175,6 +197,7 @@ function App() {
             const deadCsv = await fetchCsv("dead.csv")
             const recoveredCsv = await fetchCsv("recovered.csv")
 
+            // Slice 1st row off, because its the header row which contains no data:
             const confirmedData = readString(confirmedCsv).data.slice(1)
             const deadData = readString(deadCsv).data.slice(1)
             const recoveredData = readString(recoveredCsv).data.slice(1)
@@ -184,19 +207,37 @@ function App() {
 
 
             // Need to perform slicing here, because last row is newline, which contains no new data.
-            console.log(confirmedData)
             setState({
                 confirmed: confirmedData.slice(0, confirmedData.length - 1),
                 recovered: recoveredData.slice(0, recoveredData.length - 1),
                 dead: deadData.slice(0, deadData.length - 1),
             })
+
+
+
+
+            let confirmedMax = getMax(confirmedData)
+            let deadMax = getMax(deadData)
+            let recoveredMax = getMax(recoveredData)
+
+            setMaxValues({
+                deadMax,
+                recoveredMax,
+                confirmedMax
+            })
+
+            setLoaded(true)
+
+
+
+
         }
         doStuff()
     }, [])
 
-    const calculateSize = (todaysData, forPie) => {
+    const calculateSize = (todaysData, forPie, maxValue) => {
 
-        const v_max = 132000 // This is just an estimate, need to calculate correct value automatically later.
+        const v_max = maxValue // This is just an estimate, need to calculate correct value automatically later.
 
         if (!forPie) {
             let v_i = todaysData
@@ -223,31 +264,7 @@ function App() {
 
     }
 
-    if (state.confirmed.length === 0 || state.dead.length === 0 || state.recovered.length === 0) return "Loading data..."
-
-    const recoveredMarkers = state.recovered.map((confirmed, i) => {
-        // const provinceOrState = confirmed[0]
-        // const countryOrRegion = confirmed[1]
-        const lat = confirmed[2]
-        const long = confirmed[3]
-        const count = parseInt(confirmed[selectedDateIndex])
-        let size = calculateSize(count, false)
-        if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
-
-        return (
-            <Marker
-                key={i + "recovered"}
-                marker={{ coordinates: [long, lat] }}
-                style={{
-                    default: { fill: "green" },
-                    hover: { fill: "green" },
-                    pressed: { fill: "green" },
-                }}
-            >
-                <circle cx={0} cy={0} r={size} />
-            </Marker>
-        )
-    })
+    if (!loaded) return "Loading data..."
 
     const getTodaysData = (lat, long) => {
         const key = lat + "," + long
@@ -276,13 +293,44 @@ function App() {
         }
     }
 
-    const deadMarkers = state.recovered.map((confirmed, i) => {
-        // const provinceOrState = confirmed[0]
-        // const countryOrRegion = confirmed[1]
-        const lat = confirmed[2]
-        const long = confirmed[3]
-        const count = parseInt(confirmed[selectedDateIndex])
-        let size = calculateSize(count, false)
+
+    const recoveredMarkers = state.recovered.map((row, i) => {
+        const provinceOrState = row[0]
+        const countryOrRegion = row[1]
+        const lat = row[2]
+        const long = row[3]
+        const count = parseInt(row[selectedDateIndex])
+        let size = calculateSize(count, false, maxValues.recoveredMax)
+        if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
+
+        return (
+            <Marker
+                key={i + "recovered"}
+                onClick={() => setActiveLocation({
+                    key: lat + "," + long,
+                    provinceOrState,
+                    countryOrRegion
+                })}
+
+                marker={{ coordinates: [long, lat] }}
+                style={{
+                    default: { fill: "green" },
+                    hover: { fill: "green" },
+                    pressed: { fill: "green" },
+                }}
+            >
+                <circle cx={0} cy={0} r={size} />
+            </Marker>
+        )
+    })
+
+    const deadMarkers = state.dead.map((row, i) => {
+        const provinceOrState = row[0]
+        const countryOrRegion = row[1]
+        const lat = row[2]
+        const long = row[3]
+        const count = parseInt(row[selectedDateIndex])
+        let size = calculateSize(count, false, maxValues.deadMax)
 
 
         if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
@@ -290,11 +338,46 @@ function App() {
         return (
             <Marker
                 key={i + "dead"}
+                onClick={() => setActiveLocation({
+                    key: lat + "," + long,
+                    provinceOrState,
+                    countryOrRegion
+                })}
                 marker={{ coordinates: [long, lat] }}
                 style={{
-                    default: { fill: "red" },
-                    hover: { fill: "red" },
-                    pressed: { fill: "red" },
+                    default: { fill: "gray" },
+                    hover: { fill: "gray" },
+                    pressed: { fill: "gray" },
+                }}
+            >
+                <circle cx={0} cy={0} r={size} />
+            </Marker>
+        )
+    })
+
+    const confirmedMarkers = state.confirmed.map((row, i) => {
+        const provinceOrState = row[0]
+        const countryOrRegion = row[1]
+        const lat = row[2]
+        const long = row[3]
+        const count = parseInt(row[selectedDateIndex])
+        let size = calculateSize(count, false, maxValues.confirmedMax)
+
+        if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
+
+        return (
+            <Marker
+                onClick={() => setActiveLocation({
+                    key: lat + "," + long,
+                    provinceOrState,
+                    countryOrRegion
+                })}
+                key={i + "confirmed"}
+                marker={{ coordinates: [long, lat] }}
+                style={{
+                    default: { fill: "yellow" },
+                    hover: { fill: "yellow" },
+                    pressed: { fill: "yellow" },
                 }}
             >
                 <circle cx={0} cy={0} r={size} />
@@ -303,25 +386,27 @@ function App() {
     })
 
     const pieMarkers = state.confirmed.map((confirmed, i) => {
-        // const provinceOrState = confirmed[0]
-        // const countryOrRegion = confirmed[1]
+        const provinceOrState = confirmed[0]
+        const countryOrRegion = confirmed[1]
         const lat = confirmed[2]
         const long = confirmed[3]
-
-
         const todaysData = getTodaysData(lat, long)
+
 
         const hasCases = Object.entries(todaysData).find(entry => entry[1] !== 0)
         if (!hasCases) return null
 
-        const size = calculateSize(todaysData, true)
+        const size = calculateSize(todaysData, true, maxValues.recoveredMax + maxValues.deadMax + maxValues.confirmedMax)
 
         return (
             <Marker
-                onClick={() => setActiveLocationKey(lat + "," + long)}
-                key={i + "confirmed"}
+                onClick={() => setActiveLocation({
+                    key: lat + "," + long,
+                    provinceOrState,
+                    countryOrRegion
+                })}
+                key={i + "pie"}
                 marker={{ coordinates: [long, lat] }}
-
             >
                 <g transform={`translate(-100,-100)`}>
                     <SimplePieChart size={size} data={todaysData} />
@@ -340,6 +425,9 @@ function App() {
             break;
         case "recovered":
             markers = recoveredMarkers
+            break;
+        case "confirmed":
+            markers = confirmedMarkers
             break;
         case "pies":
             markers = pieMarkers
@@ -361,6 +449,7 @@ function App() {
                         <span>Select which cases to show: </span>
                         <select onChange={val => setShow(val.target.value)}>
                             <option value="pies">Pies</option>
+                            <option value="confirmed">Confirmed cases</option>
                             <option value="dead">Dead cases</option>
                             <option value="recovered">Recovered cases</option>
                         </select>
@@ -368,9 +457,8 @@ function App() {
                         <Slider onChange={val => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
                     </div>
                     <ActiveCountryDetails activeCountry={activeCountry} />
-                    <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocationKey={activeLocationKey} dailyData={dailyData} />
-                    <h1>Graph:</h1>
-                    <Graph dailyData={dailyData} activeLocationKey={activeLocationKey} />
+                    <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} dailyData={dailyData} />
+                    <Graph dailyData={dailyData} activeLocation={activeLocation} />
                 </div>
 
 
