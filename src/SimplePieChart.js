@@ -12,7 +12,7 @@ export const SimplePieChart = ({ data, size }) => {
     let pie = d3.pie()(pieData)
 
     return (
-        <svg height={height} width={width}>
+        <svg height={height} width={width} style={{ opacity: "75%" }}>
             <g transform={`translate(100,100)`}>
                 <Slice size={size} pie={pie} />
             </g>
