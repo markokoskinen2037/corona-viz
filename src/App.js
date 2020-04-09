@@ -14,6 +14,7 @@ import 'rc-slider/assets/index.css';
 import ActiveDotDetails from "./ActiveDotDetails";
 import { SimplePieChart } from "./SimplePieChart";
 import Graph from "./Graph";
+import MyMap from "./MyMap";
 
 function App() {
 
@@ -442,7 +443,6 @@ function App() {
 
             <div className="application-container">
                 <div className="sidebar">
-
                     <div id="controls" style={{ paddingBottom: "1em" }} >
                         <span>Select which cases to show: </span>
                         <select onChange={val => setShow(val.target.value)}>
@@ -457,34 +457,10 @@ function App() {
                     <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} dailyData={dailyData} />
                     <Graph dailyData={dailyData} activeLocation={activeLocation} />
                 </div>
+                <MyMap zoom={zoom} markers={markers} setZoom={setZoom} />
 
-
-                <div className="map">
-                    <ComposableMap style={{ width: "100%", height: "auto" }}>
-                        <ZoomableGroup zoom={zoom}>
-                            <Geographies geography={"https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json"}>
-                                {(geographies, projection) => geographies.map((geography, i) => (
-                                    <Geography
-                                        key={i}
-                                        geography={geography}
-                                        projection={projection}
-                                    />
-                                ))}
-                            </Geographies>
-                            <Markers>
-                                {markers}
-                            </Markers>
-                        </ZoomableGroup>
-                    </ComposableMap>
-
-                    <div className="zoom-controls">
-                        <button onClick={() => setZoom(zoom * 2)}>Zoom in</button>
-                        <button onClick={() => setZoom(zoom / 2)}>Zoom out</button>
-                    </div>
-
-
-                </div>
             </div>
+
 
 
 
