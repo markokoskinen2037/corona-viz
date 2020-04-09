@@ -35,7 +35,15 @@ export default function ActiveDotDetails({ activeLocation, selectedDateIndex, da
 
     const options = {
         chart: {
-            type: "bar"
+            type: "bar",
+            height: 250
+        },
+        legend: {
+            align: 'top',
+            verticalAlign: 'right',
+            layout: 'vertical',
+            x: 0,
+            y: -15
         },
         title: {
             text: locationString
