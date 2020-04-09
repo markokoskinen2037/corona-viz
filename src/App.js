@@ -466,7 +466,6 @@ function App() {
                                 {(geographies, projection) => geographies.map((geography, i) => (
                                     <Geography
                                         key={i}
-                                        onClick={() => setActiveCountry(geography.properties)}
                                         geography={geography}
                                         projection={projection}
                                     />
