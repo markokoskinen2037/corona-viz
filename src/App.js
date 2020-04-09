@@ -26,7 +26,6 @@ function App() {
     const [selectedDateIndex, setSelectedDateIndex] = useState(50)
     const [show, setShow] = useState("pies")
     const [zoom, setZoom] = useState(1.2)
-    const [activeCountry, setActiveCountry] = useState(null)
     const [activeLocation, setActiveLocation] = useState({
         key: "64.0,26.0",
         provinceOrState: "",
