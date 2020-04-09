@@ -45,13 +45,7 @@ path {
   width: 100%;
   height: 100vh;
   border: 1px solid black;
-}
-
-.zoom-controls {
-  position: relative;
-  top: -27px;
-  left: 50%;
-  width: fit-content;
+  overflow: hidden;
 }
 
 .activeDotDetails-container {
