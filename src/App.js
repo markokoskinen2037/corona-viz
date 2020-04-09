@@ -5,7 +5,6 @@ import {
     ZoomableGroup,
     Geographies,
     Geography,
-    Markers,
     Marker,
 } from "react-simple-maps"
 import { readString } from 'react-papaparse'
@@ -311,7 +310,7 @@ function App() {
                     countryOrRegion
                 })}
 
-                marker={{ coordinates: [long, lat] }}
+                coordinates={[long, lat]}
                 style={{
                     default: { fill: "green" },
                     hover: { fill: "green" },
@@ -342,7 +341,7 @@ function App() {
                     provinceOrState,
                     countryOrRegion
                 })}
-                marker={{ coordinates: [long, lat] }}
+                coordinates={[long, lat]}
                 style={{
                     default: { fill: "gray" },
                     hover: { fill: "gray" },
@@ -372,7 +371,7 @@ function App() {
                     countryOrRegion
                 })}
                 key={i + "confirmed"}
-                marker={{ coordinates: [long, lat] }}
+                coordinates={[long, lat]}
                 style={{
                     default: { fill: "yellow" },
                     hover: { fill: "yellow" },
@@ -405,7 +404,7 @@ function App() {
                     countryOrRegion
                 })}
                 key={i + "pie"}
-                marker={{ coordinates: [long, lat] }}
+                coordinates={[long, lat]}
             >
                 <g transform={`translate(-100,-100)`}>
                     <SimplePieChart size={size} data={todaysData} />
@@ -435,7 +434,6 @@ function App() {
         default:
             break;
     }
-
 
     return (
         <div>
