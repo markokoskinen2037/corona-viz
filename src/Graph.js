@@ -3,14 +3,14 @@ import * as d3 from "d3"
 
 
 
-export default function Graph({ dailyData, activeLocationKey }) {
+export default function Graph({ dailyData, activeLocation }) {
 
     const svgRef = useRef();
     const [data, setData] = useState(null)
 
     useEffect(() => {
-        setData(dailyData[activeLocationKey])
-    }, [activeLocationKey])
+        setData(dailyData[activeLocation.key])
+    }, [activeLocation.key])
 
     useEffect(
         () => {
