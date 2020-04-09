@@ -223,7 +223,7 @@ function App() {
 
     }
 
-    if (state.confirmed.length === 0 || state.dead.length === 0) return "Loading data..."
+    if (state.confirmed.length === 0 || state.dead.length === 0 || state.recovered.length === 0) return "Loading data..."
 
     const recoveredMarkers = state.recovered.map((confirmed, i) => {
         // const provinceOrState = confirmed[0]
