@@ -440,7 +440,6 @@ function App() {
     return (
         <div>
             <h1 className="blink_me" style={{ textAlign: "center" }}>Coronavirus timeline 2020</h1>
-
             <div className="application-container">
                 <div className="sidebar">
                     <div id="controls" style={{ paddingBottom: "1em" }} >
@@ -458,13 +457,7 @@ function App() {
                     <Graph dailyData={dailyData} activeLocation={activeLocation} />
                 </div>
                 <MyMap zoom={zoom} markers={markers} setZoom={setZoom} />
-
             </div>
-
-
-
-
-
         </div >
     )
 
