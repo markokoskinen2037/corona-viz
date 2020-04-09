@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function ActiveDotDetails({ activeLocationKey, selectedDateIndex, dailyData }) {
+export default function ActiveDotDetails({ activeLocation, selectedDateIndex, dailyData }) {
 
 
-    const data = dailyData[activeLocationKey]
+    const data = dailyData[activeLocation.key]
 
     let [confirmedCases, deadCases, recoveredCases] = [0, 0, 0]
     let [deadPercentage, confirmedPercentage, recoveredPercentage] = [0, 0, 0]
@@ -30,10 +30,12 @@ export default function ActiveDotDetails({ activeLocationKey, selectedDateIndex,
         deadPercentage = (deadCases / total * 100).toFixed(2)
     }
 
+    const { provinceOrState, countryOrRegion } = activeLocation
+    const locationString = provinceOrState ? provinceOrState + ", " + countryOrRegion : countryOrRegion
 
     return (
         <>
-            <h1>Detailed statistics:</h1>
+            <h1>{locationString}:</h1>
             <div style={{ backgroundColor: "black", fontSize: 30 }}>
                 <div style={{ color: "yellow" }}>Confirmed: {confirmedCases} ({confirmedPercentage}%)  </div>
                 <div style={{ color: "green" }}>Recovered: {recoveredCases} ({recoveredPercentage}%)</div>
