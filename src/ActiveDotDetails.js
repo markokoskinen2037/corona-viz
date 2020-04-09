@@ -1,8 +1,9 @@
 import React from 'react'
+import Highcharts from 'highcharts'
+import HighchartsReact from 'highcharts-react-official'
 
 export default function ActiveDotDetails({ activeLocation, selectedDateIndex, dailyData }) {
     const data = dailyData[activeLocation.key]
-
     let [confirmedCases, deadCases, recoveredCases] = [0, 0, 0]
     let [deadPercentage, confirmedPercentage, recoveredPercentage] = [0, 0, 0]
     let total = 0
@@ -31,14 +32,68 @@ export default function ActiveDotDetails({ activeLocation, selectedDateIndex, da
     const { provinceOrState, countryOrRegion } = activeLocation
     const locationString = provinceOrState ? provinceOrState + ", " + countryOrRegion : countryOrRegion
 
+
+    const options = {
+        chart: {
+            type: "bar"
+        },
+        title: {
+            text: locationString
+        },
+        xAxis: {
+            categories: [''], // This removes values from left side (0)
+            title: {
+                text: null
+            }
+        },
+        yAxis: {
+            min: 0,
+            title: {
+                text: 'Cases',
+                align: 'high'
+            },
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        tooltip: {
+            valueSuffix: ' percent',
+            formatter: function () {
+                switch (this.series.name) {
+                    case "Confirmed":
+                        return `${confirmedCases} confirmed (${confirmedPercentage}%)`
+                    case "Dead":
+                        return `${deadCases} dead (${deadPercentage}%)`
+                    case "Recovered":
+                        return `${recoveredCases} recovered (${recoveredPercentage}%)`
+                    default:
+                        return "Undefined"
+                }
+            }
+        },
+        series: [{
+            data: [confirmedCases],
+            color: "yellow",
+            name: "Confirmed"
+        },
+        {
+            data: [recoveredCases],
+            color: "green",
+            name: "Recovered"
+        },
+        {
+            data: [deadCases],
+            color: "gray",
+            name: "Dead"
+        }]
+    }
+
+
     return (
-        <>
-            <h1>{locationString}:</h1>
-            <div className="activeDotDetails-container">
-                <div style={{ color: "yellow" }}>Confirmed: {confirmedCases} ({confirmedPercentage}%)  </div>
-                <div style={{ color: "green" }}>Recovered: {recoveredCases} ({recoveredPercentage}%)</div>
-                <div style={{ color: "gray" }} >Dead: {deadCases} ({deadPercentage}%)</div>
-            </div>
-        </>
+        <HighchartsReact
+            highcharts={Highcharts}
+            options={options}
+        />
+
     )
 }
