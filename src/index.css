@@ -1,55 +1,61 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding:0;
+  padding: 0;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
 path {
-  outline:none
+  outline: none;
 }
 
 .blink_me {
   animation: blinker 1.5s linear infinite;
-  color:red;
+  color: red;
 }
 
-@keyframes blinker {  
-  50% { opacity: 0.0; }
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
 }
 
-
-.application-container{
-  display:flex;
+.application-container {
+  display: flex;
 }
 
-.sidebar{
+.sidebar {
   height: 100vh;
   border: 1px solid black;
-  padding:5px;
+  padding: 5px;
   min-width: 370px; /* Width of the graph + margin 50px*/
   max-width: 370px; /* Width of the graph + margin 50px*/
 }
 
-
-.map{
+.map {
   padding: 5px;
-  width:100%;
-  height:100vh;
+  width: 100%;
+  height: 100vh;
   border: 1px solid black;
 }
 
-.zoom-controls{
+.zoom-controls {
   position: relative;
-  top:-27px;
-  left:50%;
+  top: -27px;
+  left: 50%;
   width: fit-content;
+}
+
+.activeDotDetails-container {
+  font-size: 30px;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  margin-bottom: 1em;
 }
