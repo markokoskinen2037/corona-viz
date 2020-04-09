@@ -36,14 +36,22 @@ export default function ActiveDotDetails({ activeLocation, selectedDateIndex, da
     const options = {
         chart: {
             type: "bar",
-            height: 250
+            spacingBottom: 3,
+            spacingTop: 3,
+            spacingLeft: 3,
+            spacingRight: 3,
+
+            // Explicitly tell the width and height of a chart
+            height: 200,
+
+            backgroundColor: null
         },
         legend: {
             align: 'top',
             verticalAlign: 'right',
             layout: 'vertical',
             x: 0,
-            y: -15
+            y: 0
         },
         title: {
             text: locationString
