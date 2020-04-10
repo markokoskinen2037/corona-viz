@@ -86,10 +86,8 @@ function App() {
       }
     })
 
-    for (let dayIndex = 4; dayIndex < dayCount; dayIndex++) {
-      // Start from i = 4, because first 3 entries are metadata.
-
-      confirmedData.forEach((row) => {
+    const helper = (data, type, dayIndex) => {
+      data.forEach((row) => {
         const count = parseInt(row[dayIndex])
         const lat = row[2]
         const long = row[3]
@@ -98,62 +96,26 @@ function App() {
 
         const key = lat + ',' + long
 
-        const oldList = results[key].confirmed
+        const oldList = results[key][type]
         oldList.push(count)
 
         results = {
           ...results,
           [key]: {
             ...results[key],
-            confirmed: oldList,
-          },
-        }
-      })
-
-      deadData.forEach((row) => {
-        const count = parseInt(row[dayIndex])
-        const lat = row[2]
-        const long = row[3]
-
-        if (!lat || !long) return
-
-        const key = lat + ',' + long
-
-        const oldList = results[key].dead
-        oldList.push(count)
-
-        results = {
-          ...results,
-          [key]: {
-            ...results[key],
-            dead: oldList,
-          },
-        }
-      })
-
-      recoveredData.forEach((row) => {
-        const count = parseInt(row[dayIndex])
-        const lat = row[2]
-        const long = row[3]
-
-        if (!lat || !long) return
-
-        const key = lat + ',' + long
-
-        const oldList = results[key].recovered
-        oldList.push(count)
-
-        results = {
-          ...results,
-          [key]: {
-            ...results[key],
-            recovered: oldList,
+            [type]: oldList,
           },
         }
       })
     }
 
-    //console.log(results)
+    // Start from i = 4, because first 3 entries are metadata.
+    for (let dayIndex = 4; dayIndex < dayCount; dayIndex++) {
+      helper(confirmedData, 'confirmed', dayIndex)
+      helper(deadData, 'dead', dayIndex)
+      helper(recoveredData, 'recovered', dayIndex)
+    }
+
     setDailyData(results)
   }
 
