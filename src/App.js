@@ -170,9 +170,19 @@ function App() {
 
   useEffect(() => {
     async function getAndParseData() {
-      const confirmedCsv = await fetchCsv('confirmed.csv')
-      const deadCsv = await fetchCsv('dead.csv')
-      const recoveredCsv = await fetchCsv('recovered.csv')
+      const basePath = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/'
+      const FAILSTRING = '404: Not Found'
+
+      let confirmedCsv = await fetchCsv(`${basePath}/time_series_covid19_confirmed_global.csv`)
+      let deadCsv = await fetchCsv(`${basePath}time_series_covid19_deaths_global.csv`)
+      let recoveredCsv = await fetchCsv(`${basePath}time_series_covid19_recovered_global.csv`)
+
+      if (confirmedCsv === FAILSTRING || deadCsv === FAILSTRING || recoveredCsv === FAILSTRING) {
+        alert('Failed to read latest data from github.\nUsing local (outdated) data instead.\nSorry for the inconvinience')
+        confirmedCsv = await fetchCsv('confirmed.csv')
+        deadCsv = await fetchCsv('dead.csv')
+        recoveredCsv = await fetchCsv('recovered.csv')
+      }
 
       // Slice 1st row off, because its the header row which contains no data:
       const confirmedData = readString(confirmedCsv).data.slice(1)
