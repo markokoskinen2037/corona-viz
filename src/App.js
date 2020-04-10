@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
-
-import { ComposableMap, ZoomableGroup, Geographies, Geography, Marker } from 'react-simple-maps'
+import { Marker } from 'react-simple-maps'
 import { readString } from 'react-papaparse'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
-import ActiveDotDetails from './ActiveDotDetails'
 import { SimplePieChart } from './SimplePieChart'
 import Graph from './Graph'
 import MyMap from './MyMap'
