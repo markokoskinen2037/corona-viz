@@ -408,7 +408,7 @@ function App() {
               <option value="recovered">Recovered cases</option>
             </select>
             <button onClick={lockCountryForComparison}>Lock country for comparison</button>
-            <button onClick={() => setLockedCountry(null)}>x</button>
+            {lockedCountry && <button onClick={() => setLockedCountry(null)}>x</button>}
             <h1>Day: {selectedDateIndex}</h1>
             <Slider onChange={(val) => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
           </div>
