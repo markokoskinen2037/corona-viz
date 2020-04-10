@@ -8,6 +8,7 @@ import ActiveDotDetails from './ActiveDotDetails'
 import { SimplePieChart } from './SimplePieChart'
 import Graph from './Graph'
 import MyMap from './MyMap'
+import CompareContainer from './CompareContainer'
 
 function App() {
   const [state, setState] = useState({
@@ -261,30 +262,10 @@ function App() {
 
   const handleLocationSelect = (lat, long, provinceOrState, countryOrRegion) => {
     const key = lat + ',' + long
-    let [confirmedCases, deadCases, recoveredCases] = [0, 0, 0]
-
-    const data = dailyData[key]
-    if (data) {
-      if (data['confirmed'][selectedDateIndex]) {
-        confirmedCases = data['confirmed'][selectedDateIndex]
-      }
-
-      if (data['dead'][selectedDateIndex]) {
-        deadCases = data['dead'][selectedDateIndex]
-      }
-
-      if (data['recovered'][selectedDateIndex]) {
-        recoveredCases = data['recovered'][selectedDateIndex]
-      }
-    }
-
-    const max = Math.max(confirmedCases, deadCases, recoveredCases)
-
     setActiveLocation({
       key,
       provinceOrState,
       countryOrRegion,
-      max,
     })
   }
 
@@ -406,33 +387,10 @@ function App() {
   }
 
   const lockCountryForComparison = () => {
-    console.log('Locking', activeLocation.countryOrRegion)
-    let [confirmedCases, deadCases, recoveredCases] = [0, 0, 0]
-
-    const data = dailyData[activeLocation.key]
-    if (data) {
-      if (data['confirmed'][selectedDateIndex]) {
-        confirmedCases = data['confirmed'][selectedDateIndex]
-      }
-
-      if (data['dead'][selectedDateIndex]) {
-        deadCases = data['dead'][selectedDateIndex]
-      }
-
-      if (data['recovered'][selectedDateIndex]) {
-        recoveredCases = data['recovered'][selectedDateIndex]
-      }
-    }
-
-    const max = Math.max(confirmedCases, deadCases, recoveredCases)
-
     setLockedCountry({
       ...activeLocation,
-      max,
     })
   }
-
-  const yMax = lockedCountry ? Math.max(lockedCountry.max, activeLocation.max) : activeLocation.max
 
   return (
     <div>
@@ -450,11 +408,11 @@ function App() {
               <option value="recovered">Recovered cases</option>
             </select>
             <button onClick={lockCountryForComparison}>Lock country for comparison</button>
+            <button onClick={() => setLockedCountry(null)}>x</button>
             <h1>Day: {selectedDateIndex}</h1>
             <Slider onChange={(val) => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
           </div>
-          {lockedCountry && <ActiveDotDetails yMax={yMax} selectedDateIndex={selectedDateIndex} activeLocation={lockedCountry} dailyData={dailyData} />}
-          <ActiveDotDetails yMax={yMax} selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} dailyData={dailyData} />{' '}
+          <CompareContainer selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} lockedLocation={lockedCountry} dailyData={dailyData} />
           <Graph dailyData={dailyData} activeLocation={activeLocation} />
         </div>
         <MyMap zoom={zoom} markers={markers} setZoom={setZoom} />
