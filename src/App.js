@@ -119,17 +119,6 @@ function App() {
     setDailyData(results)
   }
 
-  const getMax = (data) => {
-    let max = 0
-    data.forEach((row) => {
-      row.forEach((element) => {
-        let val = parseInt(element)
-        if (val > max) max = val
-      })
-    })
-    return max
-  }
-
   useEffect(() => {
     async function getAndParseData() {
       const basePath = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/'
@@ -159,6 +148,17 @@ function App() {
         recovered: recoveredData.slice(0, recoveredData.length - 1),
         dead: deadData.slice(0, deadData.length - 1),
       })
+
+      const getMax = (data) => {
+        let max = 0
+        data.forEach((row) => {
+          row.forEach((element) => {
+            let val = parseInt(element)
+            if (val > max) max = val
+          })
+        })
+        return max
+      }
 
       let confirmedMax = getMax(confirmedData)
       let deadMax = getMax(deadData)
