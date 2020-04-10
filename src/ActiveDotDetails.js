@@ -2,7 +2,7 @@ import React from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
-export default function ActiveDotDetails({ activeLocation, selectedDateIndex, dailyData }) {
+export default function ActiveDotDetails({ yMax, activeLocation, selectedDateIndex, dailyData }) {
   const data = dailyData[activeLocation.key]
   let [confirmedCases, deadCases, recoveredCases] = [0, 0, 0]
   let [deadPercentage, confirmedPercentage, recoveredPercentage] = [0, 0, 0]
@@ -63,6 +63,7 @@ export default function ActiveDotDetails({ activeLocation, selectedDateIndex, da
     },
     yAxis: {
       min: 0,
+      max: yMax,
       title: {
         text: 'Cases',
         align: 'high',
@@ -91,16 +92,28 @@ export default function ActiveDotDetails({ activeLocation, selectedDateIndex, da
         data: [confirmedCases],
         color: 'yellow',
         name: 'Confirmed',
+        dataLabels: {
+          enabled: true,
+          inside: true,
+        },
       },
       {
         data: [recoveredCases],
         color: 'green',
         name: 'Recovered',
+        dataLabels: {
+          enabled: true,
+          inside: true,
+        },
       },
       {
         data: [deadCases],
         color: 'gray',
         name: 'Dead',
+        dataLabels: {
+          enabled: true,
+          inside: true,
+        },
       },
     ],
   }
