@@ -169,7 +169,7 @@ function App() {
   }
 
   useEffect(() => {
-    async function doStuff() {
+    async function getAndParseData() {
       const confirmedCsv = await fetchCsv('confirmed.csv')
       const deadCsv = await fetchCsv('dead.csv')
       const recoveredCsv = await fetchCsv('recovered.csv')
@@ -200,7 +200,7 @@ function App() {
 
       setLoaded(true)
     }
-    doStuff()
+    getAndParseData()
   }, [])
 
   const calculateSize = (todaysData, forPie, maxValue) => {
