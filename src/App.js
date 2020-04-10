@@ -17,7 +17,6 @@ function App() {
 
   const [selectedDateIndex, setSelectedDateIndex] = useState(50)
   const [show, setShow] = useState('pies')
-  const [zoom, setZoom] = useState(1.2)
   const [activeLocation, setActiveLocation] = useState({
     key: '64.0,26.0',
     provinceOrState: '',
@@ -212,7 +211,6 @@ function App() {
       let r = Math.pow(v_i / v_max, 0.57) // Perceptual scaling (Flanney)
       r = r * 12 // Maximum radius
       r = r + 1 // To make the smallest dots appear
-      r = (r * zoom) / 2 // Adjust for zoom level
 
       return r
     } else {
@@ -222,10 +220,8 @@ function App() {
       let r = Math.pow(v_i / v_max, 0.57) // Perceptual scaling (Flanney)
       r = r * 12 // Maximum radius
       r = r + 1 // To make the smallest dots appear
-      r = (r * zoom) / 2 // Adjust for zoom level
 
       return r
-      //return size * zoom / 2
     }
   }
 
@@ -413,7 +409,7 @@ function App() {
           <CompareContainer selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} lockedLocation={lockedCountry} dailyData={dailyData} />
           <Graph dailyData={dailyData} activeLocation={activeLocation} />
         </div>
-        <MyMap zoom={zoom} markers={markers} setZoom={setZoom} />
+        <MyMap markers={markers} />
       </div>
     </div>
   )
