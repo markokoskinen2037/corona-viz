@@ -23,6 +23,7 @@ function App() {
     key: '64.0,26.0',
     provinceOrState: '',
     countryOrRegion: 'Finland',
+    max: 59, //TODO: This value needs to be updated later...
   }) // Finland
   const [dailyData, setDailyData] = useState({})
   const [maxValues, setMaxValues] = useState({
@@ -30,6 +31,7 @@ function App() {
     recoveredMax: null,
     confirmedMax: null,
   })
+  const [lockedCountry, setLockedCountry] = useState(null)
   const [loaded, setLoaded] = useState(false)
 
   const fetchCsv = (filename) => {
@@ -257,6 +259,35 @@ function App() {
     }
   }
 
+  const handleLocationSelect = (lat, long, provinceOrState, countryOrRegion) => {
+    const key = lat + ',' + long
+    let [confirmedCases, deadCases, recoveredCases] = [0, 0, 0]
+
+    const data = dailyData[key]
+    if (data) {
+      if (data['confirmed'][selectedDateIndex]) {
+        confirmedCases = data['confirmed'][selectedDateIndex]
+      }
+
+      if (data['dead'][selectedDateIndex]) {
+        deadCases = data['dead'][selectedDateIndex]
+      }
+
+      if (data['recovered'][selectedDateIndex]) {
+        recoveredCases = data['recovered'][selectedDateIndex]
+      }
+    }
+
+    const max = Math.max(confirmedCases, deadCases, recoveredCases)
+
+    setActiveLocation({
+      key,
+      provinceOrState,
+      countryOrRegion,
+      max,
+    })
+  }
+
   const recoveredMarkers = state.recovered.map((row, i) => {
     const provinceOrState = row[0]
     const countryOrRegion = row[1]
@@ -269,13 +300,7 @@ function App() {
     return (
       <Marker
         key={i + 'recovered'}
-        onClick={() =>
-          setActiveLocation({
-            key: lat + ',' + long,
-            provinceOrState,
-            countryOrRegion,
-          })
-        }
+        onClick={() => handleLocationSelect(lat, long, provinceOrState, countryOrRegion)}
         coordinates={[long, lat]}
         style={{
           default: { fill: 'green' },
@@ -301,13 +326,7 @@ function App() {
     return (
       <Marker
         key={i + 'dead'}
-        onClick={() =>
-          setActiveLocation({
-            key: lat + ',' + long,
-            provinceOrState,
-            countryOrRegion,
-          })
-        }
+        onClick={() => handleLocationSelect(lat, long, provinceOrState, countryOrRegion)}
         coordinates={[long, lat]}
         style={{
           default: { fill: 'gray' },
@@ -332,13 +351,7 @@ function App() {
 
     return (
       <Marker
-        onClick={() =>
-          setActiveLocation({
-            key: lat + ',' + long,
-            provinceOrState,
-            countryOrRegion,
-          })
-        }
+        onClick={() => handleLocationSelect(lat, long, provinceOrState, countryOrRegion)}
         key={i + 'confirmed'}
         coordinates={[long, lat]}
         style={{
@@ -365,17 +378,7 @@ function App() {
     const size = calculateSize(todaysData, true, maxValues.recoveredMax + maxValues.deadMax + maxValues.confirmedMax)
 
     return (
-      <Marker
-        onClick={() =>
-          setActiveLocation({
-            key: lat + ',' + long,
-            provinceOrState,
-            countryOrRegion,
-          })
-        }
-        key={i + 'pie'}
-        coordinates={[long, lat]}
-      >
+      <Marker onClick={() => handleLocationSelect(lat, long, provinceOrState, countryOrRegion)} key={i + 'pie'} coordinates={[long, lat]}>
         <g transform={`translate(-100,-100)`}>
           <SimplePieChart size={size} data={todaysData} />
         </g>
@@ -402,6 +405,35 @@ function App() {
       break
   }
 
+  const lockCountryForComparison = () => {
+    console.log('Locking', activeLocation.countryOrRegion)
+    let [confirmedCases, deadCases, recoveredCases] = [0, 0, 0]
+
+    const data = dailyData[activeLocation.key]
+    if (data) {
+      if (data['confirmed'][selectedDateIndex]) {
+        confirmedCases = data['confirmed'][selectedDateIndex]
+      }
+
+      if (data['dead'][selectedDateIndex]) {
+        deadCases = data['dead'][selectedDateIndex]
+      }
+
+      if (data['recovered'][selectedDateIndex]) {
+        recoveredCases = data['recovered'][selectedDateIndex]
+      }
+    }
+
+    const max = Math.max(confirmedCases, deadCases, recoveredCases)
+
+    setLockedCountry({
+      ...activeLocation,
+      max,
+    })
+  }
+
+  const yMax = lockedCountry ? Math.max(lockedCountry.max, activeLocation.max) : activeLocation.max
+
   return (
     <div>
       <h1 className="blink_me" style={{ textAlign: 'center' }}>
@@ -417,10 +449,12 @@ function App() {
               <option value="dead">Dead cases</option>
               <option value="recovered">Recovered cases</option>
             </select>
+            <button onClick={lockCountryForComparison}>Lock country for comparison</button>
             <h1>Day: {selectedDateIndex}</h1>
             <Slider onChange={(val) => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
           </div>
-          <ActiveDotDetails selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} dailyData={dailyData} />
+          {lockedCountry && <ActiveDotDetails yMax={yMax} selectedDateIndex={selectedDateIndex} activeLocation={lockedCountry} dailyData={dailyData} />}
+          <ActiveDotDetails yMax={yMax} selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} dailyData={dailyData} />{' '}
           <Graph dailyData={dailyData} activeLocation={activeLocation} />
         </div>
         <MyMap zoom={zoom} markers={markers} setZoom={setZoom} />
