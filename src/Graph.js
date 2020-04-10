@@ -7,7 +7,7 @@ export default function Graph({ dailyData, activeLocation }) {
 
   useEffect(() => {
     setData(dailyData[activeLocation.key])
-  }, [activeLocation.key])
+  }, [activeLocation.key, dailyData])
 
   useEffect(() => {
     if (!data) return
