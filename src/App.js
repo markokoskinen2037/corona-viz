@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Marker } from 'react-simple-maps'
 import { readString } from 'react-papaparse'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
-import { SimplePieChart } from './SimplePieChart'
 import Graph from './Graph'
 import MyMap from './MyMap'
 import CompareContainer from './CompareContainer'
+import { createMarkers, createPieMarkers } from './util'
 
 function App() {
   const [state, setState] = useState({
@@ -25,9 +24,9 @@ function App() {
   }) // Finland
   const [dailyData, setDailyData] = useState({})
   const [maxValues, setMaxValues] = useState({
-    deadMax: null,
-    recoveredMax: null,
-    confirmedMax: null,
+    dead: null,
+    recovered: null,
+    confirmed: null,
   })
   const [lockedCountry, setLockedCountry] = useState(null)
   const [loaded, setLoaded] = useState(false)
@@ -165,39 +164,15 @@ function App() {
       let recoveredMax = getMax(recoveredData)
 
       setMaxValues({
-        deadMax,
-        recoveredMax,
-        confirmedMax,
+        dead: deadMax,
+        recovered: recoveredMax,
+        confirmed: confirmedMax,
       })
 
       setLoaded(true)
     }
     getAndParseData()
   }, [])
-
-  const calculateSize = (todaysData, forPie, maxValue) => {
-    const v_max = maxValue // This is just an estimate, need to calculate correct value automatically later.
-
-    if (!forPie) {
-      let v_i = todaysData
-      let r = Math.pow(v_i / v_max, 0.57) // Perceptual scaling (Flanney)
-      r = r * 12 // Maximum radius
-      r = r + 1 // To make the smallest dots appear
-
-      return r
-    } else {
-      const { dead, recovered, confirmed } = todaysData
-
-      let v_i = dead + recovered + confirmed
-      let r = Math.pow(v_i / v_max, 0.57) // Perceptual scaling (Flanney)
-      r = r * 12 // Maximum radius
-      r = r + 1 // To make the smallest dots appear
-
-      return r
-    }
-  }
-
-  if (!loaded) return 'Loading data...'
 
   const getTodaysData = (lat, long) => {
     const key = lat + ',' + long
@@ -235,117 +210,21 @@ function App() {
     })
   }
 
-  const recoveredMarkers = state.recovered.map((row, i) => {
-    const provinceOrState = row[0]
-    const countryOrRegion = row[1]
-    const lat = row[2]
-    const long = row[3]
-    const count = parseInt(row[selectedDateIndex])
-    let size = calculateSize(count, false, maxValues.recoveredMax)
-    if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
-
-    return (
-      <Marker
-        key={i + 'recovered'}
-        onClick={() => handleLocationSelect(lat, long, provinceOrState, countryOrRegion)}
-        coordinates={[long, lat]}
-        style={{
-          default: { fill: 'green' },
-          hover: { fill: 'green' },
-          pressed: { fill: 'green' },
-        }}
-      >
-        <circle cx={0} cy={0} r={size} />
-      </Marker>
-    )
-  })
-
-  const deadMarkers = state.dead.map((row, i) => {
-    const provinceOrState = row[0]
-    const countryOrRegion = row[1]
-    const lat = row[2]
-    const long = row[3]
-    const count = parseInt(row[selectedDateIndex])
-    let size = calculateSize(count, false, maxValues.deadMax)
-
-    if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
-
-    return (
-      <Marker
-        key={i + 'dead'}
-        onClick={() => handleLocationSelect(lat, long, provinceOrState, countryOrRegion)}
-        coordinates={[long, lat]}
-        style={{
-          default: { fill: 'gray' },
-          hover: { fill: 'gray' },
-          pressed: { fill: 'gray' },
-        }}
-      >
-        <circle cx={0} cy={0} r={size} />
-      </Marker>
-    )
-  })
-
-  const confirmedMarkers = state.confirmed.map((row, i) => {
-    const provinceOrState = row[0]
-    const countryOrRegion = row[1]
-    const lat = row[2]
-    const long = row[3]
-    const count = parseInt(row[selectedDateIndex])
-    let size = calculateSize(count, false, maxValues.confirmedMax)
-
-    if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
-
-    return (
-      <Marker
-        onClick={() => handleLocationSelect(lat, long, provinceOrState, countryOrRegion)}
-        key={i + 'confirmed'}
-        coordinates={[long, lat]}
-        style={{
-          default: { fill: 'yellow' },
-          hover: { fill: 'yellow' },
-          pressed: { fill: 'yellow' },
-        }}
-      >
-        <circle cx={0} cy={0} r={size} />
-      </Marker>
-    )
-  })
-
-  const pieMarkers = state.confirmed.map((confirmed, i) => {
-    const provinceOrState = confirmed[0]
-    const countryOrRegion = confirmed[1]
-    const lat = confirmed[2]
-    const long = confirmed[3]
-    const todaysData = getTodaysData(lat, long)
-
-    const hasCases = Object.entries(todaysData).find((entry) => entry[1] !== 0)
-    if (!hasCases) return null
-
-    const size = calculateSize(todaysData, true, maxValues.recoveredMax + maxValues.deadMax + maxValues.confirmedMax)
-
-    return (
-      <Marker onClick={() => handleLocationSelect(lat, long, provinceOrState, countryOrRegion)} key={i + 'pie'} coordinates={[long, lat]}>
-        <g transform={`translate(-100,-100)`}>
-          <SimplePieChart size={size} data={todaysData} />
-        </g>
-      </Marker>
-    )
-  })
+  if (!loaded) return 'Loading data...'
 
   let markers
   switch (show) {
     case 'dead':
-      markers = deadMarkers
+      markers = createMarkers(show, state, selectedDateIndex, maxValues, handleLocationSelect)
       break
     case 'recovered':
-      markers = recoveredMarkers
+      markers = createMarkers(show, state, selectedDateIndex, maxValues, handleLocationSelect)
       break
     case 'confirmed':
-      markers = confirmedMarkers
+      markers = createMarkers(show, state, selectedDateIndex, maxValues, handleLocationSelect)
       break
     case 'pies':
-      markers = pieMarkers
+      markers = createPieMarkers(state.confirmed, selectedDateIndex, maxValues, handleLocationSelect, getTodaysData)
       break
 
     default:
