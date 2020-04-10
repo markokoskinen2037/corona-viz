@@ -1,1 +1,1 @@
-Application hosted at: https://corona-viz-mk.herokuapp.com/
+Application hosted at: https://corona-viz-mk.web.app/
