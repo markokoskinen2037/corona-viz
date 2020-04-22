@@ -34,7 +34,7 @@ export default function NewGraph({ dailyData, activeLocation, selectedDateIndex 
 
   const options = {
     chart: {
-      type: 'spline',
+      type: 'area',
 
       spacingBottom: 3,
       spacingTop: 3,
