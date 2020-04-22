@@ -65,6 +65,9 @@ export default function NewGraph({ dailyData, activeLocation, selectedDateIndex 
         color: 'gray',
       },
     ],
+    credits: {
+      enabled: false,
+    },
   }
 
   return (

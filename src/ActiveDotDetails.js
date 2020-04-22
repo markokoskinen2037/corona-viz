@@ -116,6 +116,9 @@ export default function ActiveDotDetails({ yMax, activeLocation, selectedDateInd
         },
       },
     ],
+    credits: {
+      enabled: false,
+    },
   }
 
   return <HighchartsReact highcharts={Highcharts} options={options} />
