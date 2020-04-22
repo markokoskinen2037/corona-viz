@@ -35,19 +35,18 @@ export default function NewGraph({ dailyData, activeLocation, selectedDateIndex 
   const options = {
     chart: {
       type: 'area',
-
-      spacingBottom: 3,
-      spacingTop: 3,
-      spacingLeft: 3,
-      spacingRight: 3,
-
-      // Explicitly tell the width and height of a chart
       height: 400,
 
       backgroundColor: null,
     },
     title: {
       text: activeLocation.countryOrRegion,
+    },
+    yAxis: {
+      categories: [''], // This removes values from left side (0)
+      title: {
+        text: null,
+      },
     },
     series: [
       {
