@@ -6,6 +6,7 @@ import Graph from './Graph'
 import MyMap from './MyMap'
 import CompareContainer from './CompareContainer'
 import { createMarkers, createPieMarkers } from './util'
+import NewGraph from './NewGraph'
 
 function App() {
   const [state, setState] = useState({
@@ -17,11 +18,11 @@ function App() {
   const [selectedDateIndex, setSelectedDateIndex] = useState(50)
   const [show, setShow] = useState('pies')
   const [activeLocation, setActiveLocation] = useState({
-    key: '64.0,26.0',
+    key: '64,26',
     provinceOrState: '',
     countryOrRegion: 'Finland',
     max: 59, //TODO: This value needs to be updated later...
-  }) // Finland
+  })
   const [dailyData, setDailyData] = useState({})
   const [maxValues, setMaxValues] = useState({
     dead: null,
@@ -95,6 +96,9 @@ function App() {
 
         const key = lat + ',' + long
 
+        if (key === '64.0,26.0' && type === 'confirmed') {
+          alert('')
+        }
         const oldList = results[key][type]
         oldList.push(count)
 
@@ -114,7 +118,6 @@ function App() {
       helper(deadData, 'dead', dayIndex)
       helper(recoveredData, 'recovered', dayIndex)
     }
-
     setDailyData(results)
   }
 
@@ -135,9 +138,22 @@ function App() {
       }
 
       // Slice 1st row off, because its the header row which contains no data:
-      const confirmedData = readString(confirmedCsv).data.slice(1)
-      const deadData = readString(deadCsv).data.slice(1)
-      const recoveredData = readString(recoveredCsv).data.slice(1)
+      let confirmedData = readString(confirmedCsv).data.slice(1)
+      let deadData = readString(deadCsv).data.slice(1)
+      let recoveredData = readString(recoveredCsv).data.slice(1)
+
+      // Now fix inconsistently formatted coordinates to be the same. i.e from "63.0" to "63"
+      const fixCoordinates = (data) => {
+        return data.map((row) =>
+          row.map((element, index) => {
+            return index === 2 || index === 3 ? parseFloat(element) : element
+          })
+        )
+      }
+
+      confirmedData = fixCoordinates(confirmedData)
+      deadData = fixCoordinates(deadData)
+      recoveredData = fixCoordinates(recoveredData)
 
       createSummary(confirmedData, deadData, recoveredData)
 
@@ -258,7 +274,7 @@ function App() {
             <Slider onChange={(val) => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
           </div>
           <CompareContainer selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} lockedLocation={lockedCountry} dailyData={dailyData} />
-          <Graph dailyData={dailyData} activeLocation={activeLocation} />
+          <NewGraph dailyData={dailyData} activeLocation={activeLocation} selectedDateIndex={selectedDateIndex} />
         </div>
         <MyMap markers={markers} />
       </div>
