@@ -54,7 +54,7 @@ const createMarkers = (type, state, selectedDateIndex, maxValues, handleLocation
         onClick={() => handleLocationSelect(lat, long, provinceOrState, countryOrRegion)}
         coordinates={[long, lat]}
         style={{
-          default: { fill: color },
+          default: { fill: color, opacity: '75%' },
           hover: { fill: color },
           pressed: { fill: color },
         }}
