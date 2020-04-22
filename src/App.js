@@ -226,7 +226,15 @@ function App() {
     })
   }
 
-  if (!loaded) return <span className="spinner">Downloading latest infection data</span>
+  if (!loaded)
+    return (
+      <span className="spinner">
+        Downloading, processing and transpiling latest infection data from{' '}
+        <a target="_blank" href="https://github.com/CSSEGISandData/COVID-19">
+          https://github.com/CSSEGISandData/COVID-19
+        </a>
+      </span>
+    )
 
   let markers
   switch (show) {
@@ -260,7 +268,7 @@ function App() {
       </h1>
       <div className="application-container">
         <div className="sidebar">
-          <div id="controls" style={{ paddingBottom: '1em' }}>
+          <div id="controls" style={{ padding: '1em 0em' }}>
             <span>Select which cases to show: </span>
             <select onChange={(val) => setShow(val.target.value)}>
               <option value="pies">Pies</option>
@@ -278,6 +286,11 @@ function App() {
         </div>
         <MyMap markers={markers} />
       </div>
+      <span id="github-link">
+        <a href="https://github.com/markokoskinen2037/corona-viz" target="_blank">
+          sourcecode@github
+        </a>
+      </span>
     </div>
   )
 }
