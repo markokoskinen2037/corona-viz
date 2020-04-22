@@ -210,7 +210,7 @@ function App() {
     })
   }
 
-  if (!loaded) return 'Loading data...'
+  if (!loaded) return <span className="spinner">Downloading latest infection data</span>
 
   let markers
   switch (show) {
