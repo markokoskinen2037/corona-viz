@@ -32,8 +32,8 @@ path {
 
 .sidebar {
   height: 100vh;
-  min-width: 500px; /* Width of the graph + margin 50px*/
-  max-width: 500px; /* Width of the graph + margin 50px*/
+  min-width: 700px; /* Width of the graph + margin 50px*/
+  max-width: 700px; /* Width of the graph + margin 50px*/
   overflow-y: scroll;
   overflow-x: hidden;
   padding: 0 0.5em;
