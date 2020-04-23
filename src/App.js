@@ -312,7 +312,7 @@ function App() {
             <button onClick={() => setAutoplay(!autoplay)}>{autoplay ? 'Stop autoplay' : 'Start autoplay'}</button>
             <Slider onChange={(val) => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
           </div>
-          <img src="./legend.png"></img>
+          <img alt="legend" src="./legend.png"></img>
           <CompareContainer selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} lockedLocation={lockedCountry} dailyData={dailyData} />
         </div>
         <MyMap markers={markers} />
