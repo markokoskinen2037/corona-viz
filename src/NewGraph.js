@@ -48,6 +48,11 @@ export default function NewGraph({ dailyData, activeLocation, selectedDateIndex 
         text: null,
       },
     },
+    xAxis: {
+      title: {
+        text: 'Day index',
+      },
+    },
     series: [
       {
         data: data.confirmed.slice(0, selectedDateIndex),

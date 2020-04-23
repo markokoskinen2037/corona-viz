@@ -67,7 +67,6 @@ export default function ActiveDotDetails({ yMax, activeLocation, selectedDateInd
       max: yMax,
       title: {
         text: 'Cases',
-        align: 'high',
       },
       labels: {
         overflow: 'justify',
