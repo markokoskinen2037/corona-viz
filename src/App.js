@@ -29,6 +29,8 @@ function App() {
   })
   const [lockedCountry, setLockedCountry] = useState(null)
   const [loaded, setLoaded] = useState(false)
+  const [autoplay, setAutoplay] = useState(false)
+  const [myInterval, saveMyInterval] = useState(null)
 
   const fetchCsv = (filename) => {
     return fetch(filename).then(function (response) {
@@ -188,6 +190,36 @@ function App() {
     getAndParseData()
   }, [])
 
+  useEffect(() => {
+    if (autoplay) {
+      //Start new autoplay
+      const max = state.confirmed[0].length - 5
+      if (selectedDateIndex === max) {
+        setAutoplay(false)
+        return
+      }
+      const temp = setInterval(() => {
+        setSelectedDateIndex((selectedDateIndex) => selectedDateIndex + 1)
+      }, 200)
+
+      saveMyInterval(temp)
+    } else {
+      //Stop existing autplay
+      clearInterval(myInterval)
+      saveMyInterval(null)
+    }
+  }, [autoplay])
+
+  useEffect(() => {
+    if (!state.confirmed[0]) return
+    const max = state.confirmed[0].length - 5
+    if (selectedDateIndex === max && myInterval) {
+      clearInterval(myInterval)
+      saveMyInterval(null)
+      setAutoplay(false)
+    }
+  }, [selectedDateIndex])
+
   const getTodaysData = (lat, long) => {
     const key = lat + ',' + long
     const data = dailyData[key]
@@ -277,6 +309,7 @@ function App() {
             <button onClick={lockCountryForComparison}>Lock {activeLocation.countryOrRegion} for comparison</button>
             {lockedCountry && <button onClick={() => setLockedCountry(null)}>x</button>}
             <h1>Day: {translateDay(selectedDateIndex)}</h1>
+            <button onClick={() => setAutoplay(!autoplay)}>{autoplay ? 'Stop autoplay' : 'Start autoplay'}</button>
             <Slider onChange={(val) => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
           </div>
           <img src="./legend.png"></img>
