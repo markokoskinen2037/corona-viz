@@ -68,6 +68,9 @@ export default function NewGraph({ dailyData, activeLocation, selectedDateIndex 
     credits: {
       enabled: false,
     },
+    legend: {
+      enabled: false,
+    },
   }
 
   return (

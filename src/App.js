@@ -280,6 +280,7 @@ function App() {
             <h1>Day: {translateDay(selectedDateIndex)}</h1>
             <Slider onChange={(val) => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
           </div>
+          <img src="./legend.png"></img>
           <CompareContainer selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} lockedLocation={lockedCountry} dailyData={dailyData} />
           <NewGraph dailyData={dailyData} activeLocation={activeLocation} selectedDateIndex={selectedDateIndex} />
         </div>

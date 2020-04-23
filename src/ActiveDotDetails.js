@@ -51,6 +51,7 @@ export default function ActiveDotDetails({ yMax, activeLocation, selectedDateInd
       layout: 'vertical',
       x: 0,
       y: 0,
+      enabled: false,
     },
     title: {
       text: locationString,
