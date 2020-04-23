@@ -81,8 +81,11 @@ path {
   /* background-color: black; */
 }
 
-/* .rsm-geography */
-
+path.rsm-geography {
+  /* fill: #a02020; */
+  stroke: #a53d3d;
+  stroke-width: 0.5px;
+}
 #github-link {
   position: fixed;
   top: 0;
