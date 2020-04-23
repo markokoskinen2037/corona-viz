@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { readString } from 'react-papaparse'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
-import Graph from './Graph'
 import MyMap from './MyMap'
 import CompareContainer from './CompareContainer'
-import { createMarkers, createPieMarkers } from './util'
+import { createMarkers, createPieMarkers, translateDay } from './util'
 import NewGraph from './NewGraph'
 
 function App() {
@@ -230,7 +229,7 @@ function App() {
     return (
       <span className="spinner">
         Downloading, processing and transpiling latest infection data from{' '}
-        <a target="_blank" href="https://github.com/CSSEGISandData/COVID-19">
+        <a target="_blank" rel="noopener noreferrer" href="https://github.com/CSSEGISandData/COVID-19">
           https://github.com/CSSEGISandData/COVID-19
         </a>
       </span>
@@ -278,7 +277,7 @@ function App() {
             </select>
             <button onClick={lockCountryForComparison}>Lock {activeLocation.countryOrRegion} for comparison</button>
             {lockedCountry && <button onClick={() => setLockedCountry(null)}>x</button>}
-            <h1>Day: {selectedDateIndex}</h1>
+            <h1>Day: {translateDay(selectedDateIndex)}</h1>
             <Slider onChange={(val) => setSelectedDateIndex(val)} value={selectedDateIndex} min={0} max={state.confirmed[0].length - 5} />
           </div>
           <CompareContainer selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} lockedLocation={lockedCountry} dailyData={dailyData} />
@@ -287,7 +286,7 @@ function App() {
         <MyMap markers={markers} />
       </div>
       <span id="github-link">
-        <a href="https://github.com/markokoskinen2037/corona-viz" target="_blank">
+        <a href="https://github.com/markokoskinen2037/corona-viz" rel="noopener noreferrer" target="_blank">
           sourcecode@github
         </a>
       </span>

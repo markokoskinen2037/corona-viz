@@ -1,6 +1,7 @@
 import React from 'react'
 import { Marker } from 'react-simple-maps'
 import { SimplePieChart } from './SimplePieChart'
+import * as moment from 'moment'
 
 const calculateSize = (todaysData, forPie, maxValue) => {
   const v_max = maxValue // This is just an estimate, need to calculate correct value automatically later.
@@ -91,4 +92,12 @@ const createPieMarkers = (confirmed, selectedDateIndex, maxValues, handleLocatio
   return pieMarkers
 }
 
-export { createMarkers, createPieMarkers }
+const translateDay = (index) => {
+  const firstDate = moment(new Date('1/22/20'))
+
+  const currentDate = moment(firstDate).add(index, 'days')
+
+  return currentDate.format('L')
+}
+
+export { createMarkers, createPieMarkers, translateDay }
