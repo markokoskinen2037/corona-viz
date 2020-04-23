@@ -5,7 +5,6 @@ import 'rc-slider/assets/index.css'
 import MyMap from './MyMap'
 import CompareContainer from './CompareContainer'
 import { createMarkers, createPieMarkers, translateDay } from './util'
-import NewGraph from './NewGraph'
 
 function App() {
   const [state, setState] = useState({
@@ -282,7 +281,6 @@ function App() {
           </div>
           <img src="./legend.png"></img>
           <CompareContainer selectedDateIndex={selectedDateIndex} activeLocation={activeLocation} lockedLocation={lockedCountry} dailyData={dailyData} />
-          <NewGraph dailyData={dailyData} activeLocation={activeLocation} selectedDateIndex={selectedDateIndex} />
         </div>
         <MyMap markers={markers} />
       </div>

@@ -1,5 +1,6 @@
 import React from 'react'
 import ActiveDotDetails from './ActiveDotDetails'
+import NewGraph from './NewGraph'
 
 export default function CompareContainer({ selectedDateIndex, activeLocation, lockedLocation, dailyData }) {
   const getMax = (key) => {
@@ -25,10 +26,20 @@ export default function CompareContainer({ selectedDateIndex, activeLocation, lo
 
   const max = lockedLocation ? Math.max(getMax(activeLocation.key), getMax(lockedLocation.key)) : getMax(activeLocation.key)
 
+  const bgColor = lockedLocation ? 'white' : '#000000dd'
+
   return (
-    <div>
-      {lockedLocation && <ActiveDotDetails yMax={max} activeLocation={lockedLocation} selectedDateIndex={selectedDateIndex} dailyData={dailyData} />}
-      <ActiveDotDetails yMax={max} activeLocation={activeLocation} selectedDateIndex={selectedDateIndex} dailyData={dailyData} />
+    <div style={{ display: 'flex' }}>
+      <div style={{ width: '50%', backgroundColor: bgColor }} className="lockedDetails">
+        {lockedLocation && <ActiveDotDetails yMax={max} activeLocation={lockedLocation} selectedDateIndex={selectedDateIndex} dailyData={dailyData} />}
+        {lockedLocation && <NewGraph yMax={max} dailyData={dailyData} activeLocation={lockedLocation} selectedDateIndex={selectedDateIndex} />}
+        {!lockedLocation && <div style={{ color: 'white', position: 'relative', top: '50%', textAlign: 'center' }}>Lock a location to compare with</div>}
+      </div>
+
+      <div style={{ width: '50%' }} className="selectedDetails">
+        <ActiveDotDetails yMax={max} activeLocation={activeLocation} selectedDateIndex={selectedDateIndex} dailyData={dailyData} />
+        <NewGraph yMax={max} dailyData={dailyData} activeLocation={activeLocation} selectedDateIndex={selectedDateIndex} />
+      </div>
     </div>
   )
 }
