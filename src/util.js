@@ -30,7 +30,7 @@ const createMarkers = (type, state, selectedDateIndex, maxValues, handleLocation
       keyPostFix = 'confirmed'
       break
     case 'recovered':
-      color = 'yellow'
+      color = 'green'
       keyPostFix = 'recovered'
       break
     case 'dead':
@@ -46,7 +46,7 @@ const createMarkers = (type, state, selectedDateIndex, maxValues, handleLocation
     const countryOrRegion = row[1]
     const lat = row[2]
     const long = row[3]
-    const count = parseInt(row[selectedDateIndex])
+    const count = parseInt(row[selectedDateIndex + 4]) // +4 because using raw data, and must skip first 4 indeces, (country metadata)
     let size = calculateSize(count, false, maxValues[type])
     if (isNaN(lat) || isNaN(long) || isNaN(size) || count === 0) return null
     return (
