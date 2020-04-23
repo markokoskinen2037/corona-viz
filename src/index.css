@@ -86,8 +86,13 @@ path.rsm-geography {
   stroke: #a53d3d;
   stroke-width: 0.5px;
 }
+
 #github-link {
   position: fixed;
   top: 0;
   right: 0.5em;
+}
+
+.rsm-svg > g > rect {
+  fill: black;
 }
