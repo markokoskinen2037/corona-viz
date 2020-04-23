@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
-export default function NewGraph({ dailyData, activeLocation, selectedDateIndex }) {
+export default function NewGraph({ dailyData, activeLocation, selectedDateIndex, yMax }) {
   const [data, setData] = useState(null)
 
   useEffect(() => {
@@ -11,8 +11,6 @@ export default function NewGraph({ dailyData, activeLocation, selectedDateIndex 
 
   useEffect(() => {
     if (!data) return
-
-    console.log(data)
 
     const confirmedMax = Math.max(...data.confirmed)
     const deadMax = Math.max(...data.dead)
@@ -47,6 +45,8 @@ export default function NewGraph({ dailyData, activeLocation, selectedDateIndex 
       title: {
         text: null,
       },
+      min: 0,
+      max: yMax,
     },
     xAxis: {
       title: {
