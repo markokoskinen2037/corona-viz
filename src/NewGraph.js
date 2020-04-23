@@ -38,7 +38,8 @@ export default function NewGraph({ dailyData, activeLocation, selectedDateIndex,
       backgroundColor: null,
     },
     title: {
-      text: activeLocation.countryOrRegion,
+      text: null,
+      // text: activeLocation.countryOrRegion,
     },
     yAxis: {
       categories: [''], // This removes values from left side (0)
