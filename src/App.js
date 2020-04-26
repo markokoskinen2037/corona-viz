@@ -126,7 +126,7 @@ function App() {
       const basePath = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/'
       const FAILSTRING = '404: Not Found'
 
-      let confirmedCsv = await fetchCsv(`${basePath}/time_series_covid19_confirmed_global.csv`)
+      let confirmedCsv = await fetchCsv(`${basePath}time_series_covid19_confirmed_global.csv`)
       let deadCsv = await fetchCsv(`${basePath}time_series_covid19_deaths_global.csv`)
       let recoveredCsv = await fetchCsv(`${basePath}time_series_covid19_recovered_global.csv`)
 
