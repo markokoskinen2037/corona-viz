@@ -24,7 +24,9 @@ export default function CompareContainer({ selectedDateIndex, activeLocation, lo
     return Math.max(confirmedCases, deadCases, recoveredCases)
   }
 
-  const max = lockedLocation ? Math.max(getMax(activeLocation.key), getMax(lockedLocation.key)) : getMax(activeLocation.key)
+  let max = lockedLocation ? Math.max(getMax(activeLocation.key), getMax(lockedLocation.key)) : getMax(activeLocation.key)
+
+  if (max === 0) max = 5 // Because graph looks weird, if yMax is set to 0.
 
   const bgColor = lockedLocation ? 'white' : '#000000dd'
 
