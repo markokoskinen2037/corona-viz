@@ -148,6 +148,12 @@ function App() {
       let deadData = readString(deadCsv).data.slice(1)
       let recoveredData = readString(recoveredCsv).data.slice(1)
 
+      // Debug start
+      console.log(confirmedData)
+      console.log(deadData)
+      console.log(recoveredData)
+      // Debug end
+
       // Now fix inconsistently formatted coordinates to be the same. i.e from "63.0" to "63"
       const fixCoordinates = (data) => {
         return data.map((row) =>
