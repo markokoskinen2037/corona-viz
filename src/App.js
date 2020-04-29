@@ -19,7 +19,6 @@ function App() {
     key: '64,26',
     provinceOrState: '',
     countryOrRegion: 'Finland',
-    max: 59, //TODO: This value needs to be updated later...
   })
   const [dailyData, setDailyData] = useState({})
   const [maxValues, setMaxValues] = useState({
