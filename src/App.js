@@ -33,7 +33,7 @@ function App() {
   const [myInterval, saveMyInterval] = useState(null)
 
   const fetchCsv = (filename) => {
-    return fetch(filename).then(function (response) {
+    return fetch(filename, { cache: 'no-store' }).then(function (response) {
       let reader = response.body.getReader()
       let decoder = new TextDecoder('utf-8')
 
