@@ -130,6 +130,12 @@ function App() {
       let deadCsv = await fetchCsv(`${basePath}time_series_covid19_deaths_global.csv`)
       let recoveredCsv = await fetchCsv(`${basePath}time_series_covid19_recovered_global.csv`)
 
+      // Debug start
+      console.log(confirmedCsv)
+      console.log(deadCsv)
+      console.log(recoveredCsv)
+      // Debug end
+
       if (confirmedCsv === FAILSTRING || deadCsv === FAILSTRING || recoveredCsv === FAILSTRING) {
         alert('Failed to read latest data from github.\nUsing local (outdated) data instead.\nSorry for the inconvinience')
         confirmedCsv = await fetchCsv('confirmed.csv')
