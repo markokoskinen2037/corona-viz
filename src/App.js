@@ -32,15 +32,10 @@ function App() {
   const [autoplay, setAutoplay] = useState(false)
   const [myInterval, saveMyInterval] = useState(null)
 
-  const fetchCsv = (filename) => {
-    return fetch(filename, { cache: 'no-store' }).then(function (response) {
-      let reader = response.body.getReader()
-      let decoder = new TextDecoder('utf-8')
-
-      return reader.read().then(function (result) {
-        return decoder.decode(result.value)
-      })
-    })
+  const fetchCsv = async (filename) => {
+    const response = await fetch(filename, { cache: 'no-store' })
+    const csvString = await response.text()
+    return csvString
   }
 
   const createSummary = (confirmedData, deadData, recoveredData) => {
@@ -121,84 +116,75 @@ function App() {
     setDailyData(results)
   }
 
-  useEffect(() => {
-    async function getAndParseData() {
-      const basePath = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/'
-      const FAILSTRING = '404: Not Found'
+  const getAndParseData = async () => {
+    const basePath = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/'
+    const FAILSTRING = '404: Not Found'
 
-      let confirmedCsv = await fetchCsv(`${basePath}time_series_covid19_confirmed_global.csv`)
-      let deadCsv = await fetchCsv(`${basePath}time_series_covid19_deaths_global.csv`)
-      let recoveredCsv = await fetchCsv(`${basePath}time_series_covid19_recovered_global.csv`)
+    let confirmedCsv = await fetchCsv(`${basePath}time_series_covid19_confirmed_global.csv`)
+    let deadCsv = await fetchCsv(`${basePath}time_series_covid19_deaths_global.csv`)
+    let recoveredCsv = await fetchCsv(`${basePath}time_series_covid19_recovered_global.csv`)
 
-      // Debug start
-      console.log(confirmedCsv)
-      console.log(deadCsv)
-      console.log(recoveredCsv)
-      // Debug end
+    console.log('Length of fetched datastrings', confirmedCsv.length, deadCsv.length, recoveredCsv.length)
 
-      if (confirmedCsv === FAILSTRING || deadCsv === FAILSTRING || recoveredCsv === FAILSTRING) {
-        alert('Failed to read latest data from github.\nUsing local (outdated) data instead.\nSorry for the inconvinience')
-        confirmedCsv = await fetchCsv('confirmed.csv')
-        deadCsv = await fetchCsv('dead.csv')
-        recoveredCsv = await fetchCsv('recovered.csv')
-      }
-
-      // Slice 1st row off, because its the header row which contains no data:
-      let confirmedData = readString(confirmedCsv).data.slice(1)
-      let deadData = readString(deadCsv).data.slice(1)
-      let recoveredData = readString(recoveredCsv).data.slice(1)
-
-      // Debug start
-      console.log(confirmedData)
-      console.log(deadData)
-      console.log(recoveredData)
-      // Debug end
-
-      // Now fix inconsistently formatted coordinates to be the same. i.e from "63.0" to "63"
-      const fixCoordinates = (data) => {
-        return data.map((row) =>
-          row.map((element, index) => {
-            return index === 2 || index === 3 ? parseFloat(element) : element
-          })
-        )
-      }
-
-      confirmedData = fixCoordinates(confirmedData)
-      deadData = fixCoordinates(deadData)
-      recoveredData = fixCoordinates(recoveredData)
-
-      createSummary(confirmedData, deadData, recoveredData)
-
-      // Need to perform slicing here, because last row is newline, which contains no new data.
-      setState({
-        confirmed: confirmedData.slice(0, confirmedData.length - 1),
-        recovered: recoveredData.slice(0, recoveredData.length - 1),
-        dead: deadData.slice(0, deadData.length - 1),
-      })
-
-      const getMax = (data) => {
-        let max = 0
-        data.forEach((row) => {
-          row.forEach((element) => {
-            let val = parseInt(element)
-            if (val > max) max = val
-          })
-        })
-        return max
-      }
-
-      let confirmedMax = getMax(confirmedData)
-      let deadMax = getMax(deadData)
-      let recoveredMax = getMax(recoveredData)
-
-      setMaxValues({
-        dead: deadMax,
-        recovered: recoveredMax,
-        confirmed: confirmedMax,
-      })
-
-      setLoaded(true)
+    if (confirmedCsv === FAILSTRING || deadCsv === FAILSTRING || recoveredCsv === FAILSTRING) {
+      alert('Failed to read latest data from github.\nUsing local (outdated) data instead.\nSorry for the inconvinience')
+      confirmedCsv = await fetchCsv('confirmed.csv')
+      deadCsv = await fetchCsv('dead.csv')
+      recoveredCsv = await fetchCsv('recovered.csv')
     }
+
+    // Slice 1st row off, because its the header row which contains no data:
+    let confirmedData = readString(confirmedCsv).data.slice(1)
+    let deadData = readString(deadCsv).data.slice(1)
+    let recoveredData = readString(recoveredCsv).data.slice(1)
+
+    // Now fix inconsistently formatted coordinates to be the same. i.e from "63.0" to "63"
+    const fixCoordinates = (data) => {
+      return data.map((row, i) => {
+        return row.map((element, index) => {
+          return index === 2 || index === 3 ? parseFloat(element) : element
+        })
+      })
+    }
+
+    confirmedData = fixCoordinates(confirmedData)
+    deadData = fixCoordinates(deadData)
+    recoveredData = fixCoordinates(recoveredData)
+
+    createSummary(confirmedData, deadData, recoveredData)
+
+    // Need to perform slicing here, because last row is newline, which contains no new data.
+    setState({
+      confirmed: confirmedData.slice(0, confirmedData.length - 1),
+      recovered: recoveredData.slice(0, recoveredData.length - 1),
+      dead: deadData.slice(0, deadData.length - 1),
+    })
+
+    const getMax = (data) => {
+      let max = 0
+      data.forEach((row) => {
+        row.forEach((element) => {
+          let val = parseInt(element)
+          if (val > max) max = val
+        })
+      })
+      return max
+    }
+
+    let confirmedMax = getMax(confirmedData)
+    let deadMax = getMax(deadData)
+    let recoveredMax = getMax(recoveredData)
+
+    setMaxValues({
+      dead: deadMax,
+      recovered: recoveredMax,
+      confirmed: confirmedMax,
+    })
+
+    setLoaded(true)
+  }
+
+  useEffect(() => {
     getAndParseData()
   }, [])
 
